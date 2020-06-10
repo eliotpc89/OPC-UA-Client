@@ -23,15 +23,15 @@ namespace NewTestApp
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton PollData { get; set; }
+        UIKit.UISwitch SubscribeSwitch { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UISwitch SubscribeSwitch { get; set; }
+        UIKit.UIButton WriteDataButton { get; set; }
 
-        [Action ("PollDataButton:")]
+        [Action ("WriteDataButtonUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
-        partial void PollDataButton (UIKit.UIButton sender);
+        partial void WriteDataButtonUp (UIKit.UIButton sender);
 
         void ReleaseDesignerOutlets ()
         {
@@ -45,14 +45,14 @@ namespace NewTestApp
                 detailDescriptionLabel = null;
             }
 
-            if (PollData != null) {
-                PollData.Dispose ();
-                PollData = null;
-            }
-
             if (SubscribeSwitch != null) {
                 SubscribeSwitch.Dispose ();
                 SubscribeSwitch = null;
+            }
+
+            if (WriteDataButton != null) {
+                WriteDataButton.Dispose ();
+                WriteDataButton = null;
             }
         }
     }

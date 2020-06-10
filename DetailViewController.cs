@@ -126,7 +126,9 @@ namespace NewTestApp
     
             }
         }
-        partial void PollDataButton(UIButton sender)
+ 
+
+        partial void WriteDataButtonUp(UIButton sender)
         {
 
             WriteValue valueToWrite = new WriteValue();
@@ -171,8 +173,6 @@ namespace NewTestApp
                 throw ServiceResultException.Create(results[0], 0, diagnosticInfos, responseHeader.StringTable);
             }
         }
-
-
     }
     
 }
