@@ -30,8 +30,9 @@ namespace NewTestApp
             
             backButton = new UIBarButtonItem("",UIBarButtonItemStyle.Plain, AddNewItem);
             backButton.AccessibilityLabel = "addButton";
-            NavigationItem.LeftBarButtonItem = backButton;
             
+            NavigationItem.LeftBarButtonItem = backButton;
+  
             TableView.Source = dataSource = new DataSource(this);
             for (int i = 0; i < rootvc.OpcUa.NodeList.Count; i++)
             {
@@ -63,7 +64,8 @@ namespace NewTestApp
         {
             MainSplitViewController rootvc = (MainSplitViewController)SplitViewController;
 
-            backButton.Title = rootvc.OpcUa.BrowsePrev();
+            backButton.Title = "<" + " " + rootvc.OpcUa.BrowsePrev();
+            this.NavigationItem.LeftBarButtonItem = backButton;
             dataSource.Objects.Clear();
             foreach (var rd in rootvc.OpcUa.NodeList)
             {
@@ -104,7 +106,7 @@ namespace NewTestApp
                
                 if (rootvc.OpcUa.BrowseNext(item))
                 {
-                    backButton.Title = item.DisplayName.ToString();
+                    backButton.Title = "<"+" " + item.DisplayName.ToString();
                     dataSource.Objects.Clear();
                     
                     

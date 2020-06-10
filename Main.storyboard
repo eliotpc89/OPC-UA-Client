@@ -169,12 +169,12 @@
                         <viewControllerLayoutGuide type="bottom" id="907"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="910">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="686"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="1557" verticalCompressionResistancePriority="683">
-                                <rect key="frame" x="82" y="176" width="249" height="73"/>
+                                <rect key="frame" x="82" y="248" width="249" height="73"/>
                                 <state key="normal" title="Connect">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
                                 </state>
@@ -182,25 +182,32 @@
                                     <segue id="2576" destination="H1p-Uh-vWS" kind="showDetail"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="3202" translatesAutoresizingMaskIntoConstraints="NO" text="opc.tcp://192.168.0.157:4840" misplaced="YES" ambiguous="YES">
-                                <rect key="frame" x="99" y="117" width="232" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="3202" translatesAutoresizingMaskIntoConstraints="NO" text="opc.tcp://192.168.0.157:4840" misplaced="YES">
+                                <rect key="frame" x="109" y="186" width="232" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="URL" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3233" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="32" y="122" width="42" height="21"/>
+                                <rect key="frame" x="47" y="190" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <constraints>
-                            <constraint id="13923" firstItem="1557" firstAttribute="top" secondItem="3202" secondAttribute="bottom" constant="29"/>
+                            <constraint id="14196" firstItem="1557" firstAttribute="top" secondItem="3202" secondAttribute="bottom" constant="29"/>
+                            <constraint id="14202" firstItem="3202" firstAttribute="leading" secondItem="910" secondAttribute="leadingMargin" constant="79"/>
+                            <constraint id="14205" firstAttribute="trailingMargin" secondItem="3202" secondAttribute="trailing" constant="63"/>
+                            <constraint id="14512" firstAttribute="trailingMargin" secondItem="3202" secondAttribute="trailing" constant="63"/>
+                            <constraint id="14513" firstItem="1557" firstAttribute="top" secondItem="3202" secondAttribute="bottom" constant="29"/>
+                            <constraint id="14757" firstItem="1557" firstAttribute="top" secondItem="3202" secondAttribute="bottom" constant="29"/>
+                            <constraint id="14758" firstItem="3202" firstAttribute="leading" secondItem="910" secondAttribute="leadingMargin" constant="79"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="ConnectAddress" destination="3202" id="name-outlet-3202"/>
                     </connections>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="911" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

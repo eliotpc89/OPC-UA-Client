@@ -17,7 +17,7 @@ namespace NewTestApp
 
         public OpcConnection OpcUa;
         public int test_cnt=6;
-
+        
         public MainSplitViewController (IntPtr handle) : base (handle)
         {
             

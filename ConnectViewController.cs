@@ -11,6 +11,21 @@ namespace NewTestApp
         {
             
         }
+        public override bool ShouldPerformSegue(string segueIdentifier, NSObject sender)
+        {
+
+            if (segueIdentifier == "showDetail")
+            {
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
             base.PrepareForSegue(segue, sender);
