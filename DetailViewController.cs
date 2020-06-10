@@ -6,7 +6,7 @@ using Opc.Ua.Client;
 
 namespace NewTestApp
 {
-    public partial class DetailViewController : UIViewController
+    public partial class DetailViewController : UITableViewController
     {
         public object DetailItem { get; set; }
         public DataValue valData { get; set; } 
@@ -14,7 +14,7 @@ namespace NewTestApp
         MainSplitViewController rootvc { get; set; }
         ReferenceDescription litem { get; set; }
         NodeId localNodeid { get; set; }
-
+        
         public DetailViewController(IntPtr handle) : base(handle)
         {
         }
@@ -29,9 +29,10 @@ namespace NewTestApp
                 ConfigureView();
             }
         }
-
+        
         void ConfigureView()
         {
+            
             // Update the user interface for the detail item
             if (IsViewLoaded && DetailItem != null)
             {
@@ -64,7 +65,9 @@ namespace NewTestApp
                 }
             }
             SubscribeSwitch.SetState(subscribed, false);
-
+            
+            var ipath = DetailViewTable.IndexPathsForVisibleRows;
+          
             rootvc.OpcUa.CreateMonitoredItem(localNodeid, litem.DisplayName.ToString());
 
            
@@ -173,6 +176,9 @@ namespace NewTestApp
                 throw ServiceResultException.Create(results[0], 0, diagnosticInfos, responseHeader.StringTable);
             }
         }
+
+        
+  
     }
     
 }

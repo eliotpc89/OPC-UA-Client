@@ -23,11 +23,11 @@ namespace NewTestApp
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UISwitch SubscribeSwitch { get; set; }
+        UIKit.UITableView DetailViewTable { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton WriteDataButton { get; set; }
+        UIKit.UISwitch SubscribeSwitch { get; set; }
 
         [Action ("WriteDataButtonUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -45,14 +45,14 @@ namespace NewTestApp
                 detailDescriptionLabel = null;
             }
 
+            if (DetailViewTable != null) {
+                DetailViewTable.Dispose ();
+                DetailViewTable = null;
+            }
+
             if (SubscribeSwitch != null) {
                 SubscribeSwitch.Dispose ();
                 SubscribeSwitch = null;
-            }
-
-            if (WriteDataButton != null) {
-                WriteDataButton.Dispose ();
-                WriteDataButton = null;
             }
         }
     }

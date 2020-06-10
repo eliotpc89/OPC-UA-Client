@@ -18,6 +18,10 @@ namespace NewTestApp
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField ConnectAddress { get; set; }
 
+        [Action ("OpcUaConnectUp:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void OpcUaConnectUp (UIKit.UIButton sender);
+
         void ReleaseDesignerOutlets ()
         {
             if (ConnectAddress != null) {

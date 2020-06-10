@@ -11,20 +11,7 @@ namespace NewTestApp
         {
             
         }
-        public override bool ShouldPerformSegue(string segueIdentifier, NSObject sender)
-        {
 
-            if (segueIdentifier == "showDetail")
-            {
-                return true;
-
-            }
-            else
-            {
-                return false;
-            }
-
-        }
 
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
@@ -42,8 +29,16 @@ namespace NewTestApp
             }
         }
 
+        partial void OpcUaConnectUp(UIButton sender)
+        {
+            OpcUa = new OpcConnection();
+            OpcUa.Connect(ConnectAddress.Text.ToString());
+        
 
+        
+        }
 
+     
     }
 
 

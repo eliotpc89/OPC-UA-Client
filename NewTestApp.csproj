@@ -83,6 +83,10 @@
       <DependentUpon>MainSplitViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="OpcConnection.cs" />
+    <Compile Include="DetailViewTableController.cs" />
+    <Compile Include="DetailViewTableController.designer.cs">
+      <DependentUpon>DetailViewTableController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetailViewController.cs" />
