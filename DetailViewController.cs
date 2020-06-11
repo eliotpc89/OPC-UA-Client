@@ -59,6 +59,7 @@ namespace NewTestApp
             {
                 if (monitorItem.ResolvedNodeId == localNodeid)
                 {
+                    Console.WriteLine(localNodeid.ToString());
                     subscribed = true;
                     break;
                     
@@ -70,7 +71,7 @@ namespace NewTestApp
           
             rootvc.OpcUa.CreateMonitoredItem(localNodeid, litem.DisplayName.ToString());
 
-           
+
 
             DataChangeBox.KeyboardType = UIKeyboardType.NumbersAndPunctuation;
             // Perform any additional setup after loading the view, typically from a nib.

@@ -69,7 +69,7 @@ namespace NewTestApp
             dataSource.Objects.Clear();
             foreach (var rd in rootvc.OpcUa.NodeList)
             {
-                dataSource.Objects.Insert(0, rd);
+                dataSource.Objects.Add(rd);
 
             }
             TableView.ReloadData();
@@ -159,7 +159,16 @@ namespace NewTestApp
                 var cell = tableView.DequeueReusableCell(CellIdentifier, indexPath);
                 var node = objects[indexPath.Row] as ReferenceDescription;
                 cell.TextLabel.Text = node.DisplayName.ToString();
-
+                Console.WriteLine(node.NodeClass.ToString());
+                if (node.NodeClass.ToString() == "Object")
+                {
+                    cell.ImageView.Image = UIImage.GetSystemImage("square.grid.2x2");
+                }
+                else
+                {
+                    cell.ImageView.Image = UIImage.GetSystemImage("square");
+                }
+                
                 return cell;
             }
 
