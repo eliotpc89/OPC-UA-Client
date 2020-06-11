@@ -29,6 +29,10 @@ namespace NewTestApp
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UISwitch SubscribeSwitch { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UILabel TypeLabelVar { get; set; }
+
         [Action ("WriteDataButtonUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
         partial void WriteDataButtonUp (UIKit.UIButton sender);
@@ -53,6 +57,11 @@ namespace NewTestApp
             if (SubscribeSwitch != null) {
                 SubscribeSwitch.Dispose ();
                 SubscribeSwitch = null;
+            }
+
+            if (TypeLabelVar != null) {
+                TypeLabelVar.Dispose ();
+                TypeLabelVar = null;
             }
         }
     }

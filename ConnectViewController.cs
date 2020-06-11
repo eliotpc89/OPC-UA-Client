@@ -17,16 +17,27 @@ namespace NewTestApp
         {
             base.PrepareForSegue(segue, sender);
 
-            OpcUa = new OpcConnection();
-            OpcUa.Connect(ConnectAddress.Text.ToString());
-            var nextVc = segue.DestinationViewController
-                                          as MainSplitViewController;
-
-            if (nextVc != null)
+            if (segue.Identifier == "browseNodes")
             {
-                nextVc.test_cnt = 15;
-                nextVc.OpcUa = OpcUa;
+                var nextVc = segue.DestinationViewController
+                                         as MainSplitViewController;
+                if (nextVc != null)
+                {
+
+                    nextVc.OpcUa = OpcUa;
+                }
             }
+               
+            if (segue.Identifier == "showSubs")
+            {
+                var nextVc = segue.DestinationViewController
+                                         as SubTableViewController;
+
+                nextVc.OpcUa = OpcUa;
+                Console.WriteLine("ShowSubs");
+            }
+
+            
         }
 
         partial void OpcUaConnectUp(UIButton sender)
@@ -38,7 +49,7 @@ namespace NewTestApp
         
         }
 
-     
+
     }
 
 

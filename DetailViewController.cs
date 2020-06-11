@@ -52,6 +52,7 @@ namespace NewTestApp
             litem = DetailItem as ReferenceDescription;
             localNodeid = ExpandedNodeId.ToNodeId(litem.NodeId, rootvc.OpcUa.m_session.NamespaceUris);
             valData = rootvc.OpcUa.m_session.ReadValue(localNodeid);
+            
             rootvc.OpcUa.subDict[localNodeid] = valData;
             DataChangeBox.Text = "";
             bool subscribed = false;
@@ -66,7 +67,7 @@ namespace NewTestApp
                 }
             }
             SubscribeSwitch.SetState(subscribed, false);
-            
+            TypeLabelVar.Text = valData.WrappedValue.TypeInfo.ToString();
             var ipath = DetailViewTable.IndexPathsForVisibleRows;
           
             rootvc.OpcUa.CreateMonitoredItem(localNodeid, litem.DisplayName.ToString());

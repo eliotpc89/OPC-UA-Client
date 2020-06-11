@@ -87,6 +87,14 @@
     <Compile Include="DetailViewTableController.designer.cs">
       <DependentUpon>DetailViewTableController.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubTableViewController.cs" />
+    <Compile Include="SubTableViewController.designer.cs">
+      <DependentUpon>SubTableViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubTableView.cs" />
+    <Compile Include="SubTableView.designer.cs">
+      <DependentUpon>SubTableView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetailViewController.cs" />
