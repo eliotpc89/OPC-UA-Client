@@ -15,28 +15,7 @@ namespace NewTestApp
         public SubTableViewController (IntPtr handle) : base (handle)
         {
         }
-        async void PollDataAsync(UITableViewCell cell, NodeId node, UITableView table)
-        {
 
-            //TestLabel.ResignFirstResponder();
-            while (true)
-            {
-                await Task.Run(async () =>
-                {
-                    InvokeOnMainThread(() =>
-                    {
-
-                        //var DataText= OpcUa.subDict[node].value.WrappedValue.Value.ToString();
-                        //Console.WriteLine("async_text_update{0}",DateTime.Now.ToString());
-                        table.ReloadData();
-
-                    });
-
-                    await Task.Delay(100); // example purpose only
-                });
-
-            }
-        }
 
         public override void ViewDidLoad()
         {
@@ -57,7 +36,7 @@ namespace NewTestApp
                 }
             }
             TableView.ReloadData();
-            ReloadTable();
+            //ReloadTable();
 
 
         }
@@ -106,21 +85,45 @@ namespace NewTestApp
             {
                 return objects.Count;
             }
+            async void PollDataAsync(UITableViewCell cell, MonitorValue node, UITableView table)
+            {
 
+                //TestLabel.ResignFirstResponder();
+                while (true)
+                {
+                    await Task.Run(async () =>
+                    {
+                        InvokeOnMainThread(() =>
+                        {
+
+                            cell.TextLabel.Text = node.monItem.DisplayName;
+                            if (controller.OpcUa.subDict.ContainsKey(node.monItem.ResolvedNodeId))
+                            {
+                                cell.DetailTextLabel.Text = controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
+
+                            }
+
+                            //table.ReloadData();
+
+                        });
+
+                        await Task.Delay(100); // example purpose only
+                    });
+
+                }
+            }
             // Customize the appearance of table view cells.
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
                 var cell = tableView.DequeueReusableCell("CellDetail");
                 var node = objects[indexPath.Row] as MonitorValue;
-                //cell.ImageView.Image = UIImage.GetSystemImage("square.grid.2x2");
+
                 cell = new UITableViewCell(UITableViewCellStyle.Value2, "cell");
                 cell.ResignFirstResponder();
                 cell.TextLabel.Text = node.monItem.DisplayName;
-                
-                cell.DetailTextLabel.Text =
-                    controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString()+
-                    DateTime.Now.ToString();//node.value.WrappedValue.Value.ToString();
-                Console.WriteLine("hi {0}",DateTime.Now.ToString());
+                cell.DetailTextLabel.Text = controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
+                PollDataAsync(cell, node, tableView);
+
 
 
                 return cell;
@@ -138,7 +141,10 @@ namespace NewTestApp
                 if (editingStyle == UITableViewCellEditingStyle.Delete)
                 {
                     // Delete the row from the data source.
+                    var node = objects[indexPath.Row] as MonitorValue;
                     objects.RemoveAt(indexPath.Row);
+                    controller.OpcUa.subDict.Remove(node.monItem.ResolvedNodeId);
+                    controller.OpcUa.m_subscription.RemoveItem(node.monItem);
                     controller.TableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Fade);
                 }
                 else if (editingStyle == UITableViewCellEditingStyle.Insert)
