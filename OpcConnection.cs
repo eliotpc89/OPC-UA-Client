@@ -185,9 +185,10 @@ namespace NewTestApp
             foreach (var value in monitoredItem.DequeueValues())
             {
                 Console.WriteLine("{0}: {1}, {2}, {3}", monitoredItem.DisplayName, value.Value, value.SourceTimestamp, value.StatusCode);
+                //subDict[monitoredItem.ResolvedNodeId].value=value;
             }
             m_sub_val = notification.Value.ToString();
-
+            
             //Console.WriteLine("MonitoringNotification");
         }
 

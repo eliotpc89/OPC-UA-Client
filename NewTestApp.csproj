@@ -95,6 +95,10 @@
     <Compile Include="SubTableView.designer.cs">
       <DependentUpon>SubTableView.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubCellDetail.cs" />
+    <Compile Include="SubCellDetail.designer.cs">
+      <DependentUpon>SubCellDetail.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetailViewController.cs" />

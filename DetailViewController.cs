@@ -122,8 +122,6 @@ namespace NewTestApp
         async void PollDataAsync()
         {
 
-
-
             //TestLabel.ResignFirstResponder();
             while (true)
             {

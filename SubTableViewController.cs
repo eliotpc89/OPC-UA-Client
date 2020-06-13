@@ -4,6 +4,7 @@ using UIKit;
 using Foundation;
 using Opc.Ua;
 using Opc.Ua.Client;
+using System.Threading.Tasks;
 
 namespace NewTestApp
 {
@@ -14,7 +15,28 @@ namespace NewTestApp
         public SubTableViewController (IntPtr handle) : base (handle)
         {
         }
+        async void PollDataAsync(UITableViewCell cell, NodeId node, UITableView table)
+        {
 
+            //TestLabel.ResignFirstResponder();
+            while (true)
+            {
+                await Task.Run(async () =>
+                {
+                    InvokeOnMainThread(() =>
+                    {
+
+                        //var DataText= OpcUa.subDict[node].value.WrappedValue.Value.ToString();
+                        //Console.WriteLine("async_text_update{0}",DateTime.Now.ToString());
+                        table.ReloadData();
+
+                    });
+
+                    await Task.Delay(100); // example purpose only
+                });
+
+            }
+        }
 
         public override void ViewDidLoad()
         {
@@ -25,8 +47,8 @@ namespace NewTestApp
             Console.WriteLine(OpcUa.subDict.Count);
             foreach(var ii in OpcUa.subDict)
             {
-
-                dataSource.Objects.Add(ii.Value);
+                var iinode = ii.Value;
+                dataSource.Objects.Add(iinode);
             
                 using (var indexPath = NSIndexPath.FromRowSection(0, 0))
                 {
@@ -35,16 +57,34 @@ namespace NewTestApp
                 }
             }
             TableView.ReloadData();
+            ReloadTable();
 
 
+        }
+        async void ReloadTable()
+        {
+            while (true)
+            {
+                await Task.Run(async () =>
+                {
+                    InvokeOnMainThread(() =>
+                    {
 
+                        TableView.ReloadData();
+
+                    });
+
+                    await Task.Delay(100); // example purpose only
+                });
+
+            }
         }
 
         class DataSource : UITableViewSource
         {
             static readonly NSString CellIdentifier = new NSString("Cell");
             readonly List<object> objects = new List<object>();
-            readonly SubTableViewController controller;
+            public SubTableViewController controller;
 
             public DataSource(SubTableViewController controller)
             {
@@ -70,17 +110,22 @@ namespace NewTestApp
             // Customize the appearance of table view cells.
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
-
-                var cell = tableView.DequeueReusableCell(CellIdentifier, indexPath);
+                var cell = tableView.DequeueReusableCell("CellDetail");
                 var node = objects[indexPath.Row] as MonitorValue;
                 //cell.ImageView.Image = UIImage.GetSystemImage("square.grid.2x2");
-               
+                cell = new UITableViewCell(UITableViewCellStyle.Value2, "cell");
+                cell.ResignFirstResponder();
                 cell.TextLabel.Text = node.monItem.DisplayName;
+                
+                cell.DetailTextLabel.Text =
+                    controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString()+
+                    DateTime.Now.ToString();//node.value.WrappedValue.Value.ToString();
+                Console.WriteLine("hi {0}",DateTime.Now.ToString());
 
-         
 
                 return cell;
             }
+
 
             public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
             {
@@ -101,6 +146,9 @@ namespace NewTestApp
                     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
                 }
             }
+
+
+
         }
 
     }
