@@ -21,9 +21,10 @@ namespace NewTestApp
             {
                 var nextVc = segue.DestinationViewController
                                          as MainSplitViewController;
+                
                 if (nextVc != null)
                 {
-
+                    
                     nextVc.OpcUa = OpcUa;
                 }
             }

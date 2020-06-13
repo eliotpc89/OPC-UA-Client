@@ -85,7 +85,7 @@ namespace NewTestApp
             {
                 return objects.Count;
             }
-            async void PollDataAsync(UITableViewCell cell, MonitorValue node, UITableView table)
+            async void PollDataAsync(SubCellDetail cell, MonitorValue node, UITableView table)
             {
 
                 //TestLabel.ResignFirstResponder();
@@ -96,10 +96,16 @@ namespace NewTestApp
                         InvokeOnMainThread(() =>
                         {
 
-                            cell.TextLabel.Text = node.monItem.DisplayName;
+                            var cellName = node.monItem.DisplayName;
+                            var cellValue = "";
                             if (controller.OpcUa.subDict.ContainsKey(node.monItem.ResolvedNodeId))
                             {
-                                cell.DetailTextLabel.Text = controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
+                                cellValue= controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
+
+                            }
+                            if (cell != null)
+                            {
+                                cell.UpdateCell(node.monItem.DisplayName, cellValue);
 
                             }
 
@@ -115,16 +121,24 @@ namespace NewTestApp
             // Customize the appearance of table view cells.
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
-                var cell = tableView.DequeueReusableCell("CellDetail");
+                NSString cellId = (NSString) "CellDetail" ;
+                var cell = tableView.DequeueReusableCell(cellId) as SubCellDetail;
                 var node = objects[indexPath.Row] as MonitorValue;
-
-                cell = new UITableViewCell(UITableViewCellStyle.Value2, "cell");
+                
+                //cell = new UITableViewCell(UITableViewCellStyle.Value2, "cell");
+                
                 cell.ResignFirstResponder();
-                cell.TextLabel.Text = node.monItem.DisplayName;
-                cell.DetailTextLabel.Text = controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
+                // cell.TextLabel.Text = node.monItem.DisplayName;
+                // cell.DetailTextLabel.Text = controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
+
+
+
+                cell= new SubCellDetail(cellId);
+
+
                 PollDataAsync(cell, node, tableView);
 
-
+                
 
                 return cell;
             }
