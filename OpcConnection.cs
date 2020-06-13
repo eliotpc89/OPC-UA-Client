@@ -9,6 +9,19 @@ using System.ComponentModel;
 using UIKit;
 namespace NewTestApp
 {
+
+    public class MonitorValue
+    {
+        public MonitoredItem monItem;
+        public DataValue value;
+        public MonitorValue(MonitoredItem iMonItem, DataValue iValue)
+        {
+
+            monItem = iMonItem;
+            value = iValue;
+
+        }
+    }
     public class OpcConnection
     {
         public EndpointDescription selectedEndpoint { get; private set; }
@@ -22,9 +35,18 @@ namespace NewTestApp
         public Subscription m_subscription { get; set; }
         public string m_sub_val { get; set; }
         public MonitoredItem lastMonitoredItem { get; set; }
-        public Dictionary<NodeId, DataValue> subDict {get; set;}
+        public Dictionary<NodeId, MonitorValue> subDict {get; set;}
         private MonitoredItemNotificationEventHandler m_MonitoredItem_Notification;
+
+
+        public void addMonitorValue(NodeId iNodeId, MonitoredItem iMonItem, DataValue iValue)
+        {
+            MonitorValue newMonVal = new MonitorValue(iMonItem, iValue);
+            subDict[iNodeId] = newMonVal;
+        }
         public OpcConnection() { }
+
+
         public void Connect(string OpcAddress)
 
         {
@@ -75,7 +97,7 @@ namespace NewTestApp
             NodeList = new ReferenceDescriptionCollection();
             NodeHistory = new Stack<ReferenceDescriptionCollection>();
             NodePath = new Stack<String>();
-            subDict = new Dictionary<NodeId, DataValue>();
+            subDict = new Dictionary<NodeId, MonitorValue>();
             m_session.Browse(null, null, ObjectIds.ObjectsFolder, 0u, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, out cp, out refs);
             //DisplayName: BrowseName, NodeClass"
             NodePath.Push("");
@@ -131,11 +153,11 @@ namespace NewTestApp
 
 
 
-        public void CreateMonitoredItem(NodeId nodeId, string displayName)
+        public void CreateMonitoredItem(NodeId nodeId, string displayName, MonitoredItem monitoredItem)
         {
 
             // add the new monitored item.
-            MonitoredItem monitoredItem = new MonitoredItem(m_subscription.DefaultItem);
+            
             lastMonitoredItem = new MonitoredItem(m_subscription.DefaultItem);
             monitoredItem.StartNodeId = nodeId;
             monitoredItem.AttributeId = Attributes.Value;
@@ -158,14 +180,15 @@ namespace NewTestApp
 
 
             MonitoredItemNotification notification = e.NotificationValue as MonitoredItemNotification;
-            subDict[monitoredItem.ResolvedNodeId] = notification.Value;
+
+            subDict[monitoredItem.ResolvedNodeId] = new MonitorValue( monitoredItem, notification.Value);
             foreach (var value in monitoredItem.DequeueValues())
             {
                 Console.WriteLine("{0}: {1}, {2}, {3}", monitoredItem.DisplayName, value.Value, value.SourceTimestamp, value.StatusCode);
             }
             m_sub_val = notification.Value.ToString();
 
-            Console.WriteLine("MonitoringNotification");
+            //Console.WriteLine("MonitoringNotification");
         }
 
         public static object ChangeType( string valueText, BuiltInType bitype)

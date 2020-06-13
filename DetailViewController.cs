@@ -9,7 +9,8 @@ namespace NewTestApp
     public partial class DetailViewController : UITableViewController
     {
         public object DetailItem { get; set; }
-        public DataValue valData { get; set; } 
+        public DataValue valData { get; set; }
+        public MonitoredItem monitoredItem { get; set; }
         private bool editLock { get; set; }
         MainSplitViewController rootvc { get; set; }
         ReferenceDescription litem { get; set; }
@@ -53,25 +54,33 @@ namespace NewTestApp
             localNodeid = ExpandedNodeId.ToNodeId(litem.NodeId, rootvc.OpcUa.m_session.NamespaceUris);
             valData = rootvc.OpcUa.m_session.ReadValue(localNodeid);
             
-            rootvc.OpcUa.subDict[localNodeid] = valData;
+            
             DataChangeBox.Text = "";
             bool subscribed = false;
-            foreach (MonitoredItem monitorItem in rootvc.OpcUa.m_subscription.MonitoredItems)
+            foreach (MonitoredItem iMonitorItem in rootvc.OpcUa.m_subscription.MonitoredItems)
             {
-                if (monitorItem.ResolvedNodeId == localNodeid)
+                if (iMonitorItem.ResolvedNodeId == localNodeid)
                 {
                     Console.WriteLine(localNodeid.ToString());
                     subscribed = true;
+                    monitoredItem = iMonitorItem;
                     break;
                     
                 }
             }
+            if (!subscribed)
+            {
+                    
+                monitoredItem = new MonitoredItem(rootvc.OpcUa.m_subscription.DefaultItem);
+
+                
+            }
+            var dispName = rootvc.OpcUa.NodePath.Peek() + "." + litem.DisplayName.ToString();
+            rootvc.OpcUa.CreateMonitoredItem(localNodeid, dispName, monitoredItem);
+            rootvc.OpcUa.subDict[localNodeid] = new MonitorValue(monitoredItem, valData);
             SubscribeSwitch.SetState(subscribed, false);
             TypeLabelVar.Text = valData.WrappedValue.TypeInfo.ToString();
             var ipath = DetailViewTable.IndexPathsForVisibleRows;
-          
-            rootvc.OpcUa.CreateMonitoredItem(localNodeid, litem.DisplayName.ToString());
-
 
 
             DataChangeBox.KeyboardType = UIKeyboardType.NumbersAndPunctuation;
@@ -83,7 +92,7 @@ namespace NewTestApp
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            
+
 
             if (!SubscribeSwitch.On)
             {
@@ -92,11 +101,16 @@ namespace NewTestApp
                     if (monitorItem.ResolvedNodeId == localNodeid)
                     {
                         rootvc.OpcUa.m_subscription.RemoveItem(monitorItem);
-                        rootvc.OpcUa.subDict.Remove(localNodeid);
+                        if (rootvc.OpcUa.subDict.ContainsKey(localNodeid))
+                        {
+                            rootvc.OpcUa.subDict.Remove(localNodeid);
+                        }
+                        
+                        break;
                     }
                 }
             }
-            
+
         }
 
         public override void DidReceiveMemoryWarning()
@@ -117,10 +131,10 @@ namespace NewTestApp
                 {
                    InvokeOnMainThread(() =>
                     {
-                        //fix section to include something better than m_sub_val
                         if (rootvc.OpcUa.subDict.ContainsKey(localNodeid))
                         {
-                            detailDescriptionLabel.Text = rootvc.OpcUa.subDict[localNodeid].ToString();
+                            detailDescriptionLabel.Text = rootvc.OpcUa.subDict[localNodeid].value.WrappedValue.ToString();//lmonlist[0].Value.ToString();
+
                         }
 
 

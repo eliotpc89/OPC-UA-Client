@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UIKit;
 using Foundation;
 using Opc.Ua;
+using Opc.Ua.Client;
 
 namespace NewTestApp
 {
@@ -13,16 +14,7 @@ namespace NewTestApp
         public SubTableViewController (IntPtr handle) : base (handle)
         {
         }
-        public class NodeValue
-        {
-            public NodeId NodeId;
-            public DataValue Value;
-            public NodeValue(NodeId iNodeId, DataValue iValue)
-            {
-                NodeId = iNodeId;
-                Value = iValue;
-            }
-        }
+
 
         public override void ViewDidLoad()
         {
@@ -34,8 +26,8 @@ namespace NewTestApp
             foreach(var ii in OpcUa.subDict)
             {
 
-                dataSource.Objects.Add(new NodeValue(ii.Key, ii.Value));
-                Console.WriteLine(ii.Key.Identifier.ToString());
+                dataSource.Objects.Add(ii.Value);
+            
                 using (var indexPath = NSIndexPath.FromRowSection(0, 0))
                 {
                     TableView.InsertRows(new[] { indexPath }, UITableViewRowAnimation.Automatic);
@@ -80,9 +72,10 @@ namespace NewTestApp
             {
 
                 var cell = tableView.DequeueReusableCell(CellIdentifier, indexPath);
-                var node = objects[indexPath.Row] as NodeValue;
-                cell.ImageView.Image = UIImage.GetSystemImage("square.grid.2x2");
-                cell.TextLabel.Text = node.NodeId.ToString();
+                var node = objects[indexPath.Row] as MonitorValue;
+                //cell.ImageView.Image = UIImage.GetSystemImage("square.grid.2x2");
+               
+                cell.TextLabel.Text = node.monItem.DisplayName;
 
          
 
