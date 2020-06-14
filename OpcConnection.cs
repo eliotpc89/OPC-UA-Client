@@ -29,6 +29,9 @@ namespace NewTestApp
         public Session m_session { get; private set; }
 
         public ReferenceDescriptionCollection NodeList { get; set; }
+        public TreeNode<ReferenceDescription> NodeTreeRoot { get; set; }
+        public TreeNode<ReferenceDescription> NodeTreeLoc { get; set; }
+        public Dictionary<NodeId, TreeNode<ReferenceDescription>> NodeTreeDict { get; set; }
         public Stack<String> NodePath { get; set; }
         public Stack<ReferenceDescriptionCollection> NodeHistory { get; set; }
         public List<MonitoredItem> SubList { get; set; }
@@ -97,38 +100,60 @@ namespace NewTestApp
             NodeList = new ReferenceDescriptionCollection();
             NodeHistory = new Stack<ReferenceDescriptionCollection>();
             NodePath = new Stack<String>();
+            ReferenceDescription rootRef = new ReferenceDescription();
+            rootRef.DisplayName = "Root >";
+            NodeTreeRoot = new TreeNode<ReferenceDescription>(rootRef);
+            
+            NodeTreeLoc = new TreeNode<ReferenceDescription>(null);
+            NodeTreeLoc = NodeTreeRoot;
+            NodeId rootNodeId = ObjectIds.ObjectsFolder;
+            NodeTreeDict = new Dictionary<NodeId, TreeNode<ReferenceDescription>>();
+            NodeTreeDict[rootNodeId] = NodeTreeRoot;
+            NodeTreeRoot.Parent = NodeTreeRoot;
+            NodeTreeRoot.Data.NodeId = rootNodeId;
             subDict = new Dictionary<NodeId, MonitorValue>();
-            m_session.Browse(null, null, ObjectIds.ObjectsFolder, 0u, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, out cp, out refs);
+            BrowseNextTree(NodeTreeRoot);
+            //m_session.Browse(null, null, ObjectIds.ObjectsFolder, 0u, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, out cp, out refs);
             //DisplayName: BrowseName, NodeClass"
             NodePath.Push("");
-            foreach (var rd in refs)
-            {
-                NodeList.Add(rd);
-
-            }
+            //foreach (var rd in refs)
+            //{
+            //    NodeList.Add(rd);
+            //    NodeTreeDict[ExpandedNodeId.ToNodeId(rd.NodeId,m_session.NamespaceUris)] = NodeTreeRoot.AddChild(rd); ;
+            //}
 
 
   
 
 
         }
-        public bool BrowseNext(ReferenceDescription nodeRef )
+        
+
+        public bool BrowseNextTree(TreeNode<ReferenceDescription> treeNode)
         {
             ReferenceDescriptionCollection nextRefs;
             Byte[] cp;
-            
-            
-            
-            m_session.Browse(null, null, ExpandedNodeId.ToNodeId(nodeRef.NodeId, m_session.NamespaceUris), 10000u, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, out cp, out nextRefs);
-            
+
+            NodeId lNodeId = ExpandedNodeId.ToNodeId(treeNode.Data.NodeId, m_session.NamespaceUris);
+            NodeTreeLoc = treeNode;
+            m_session.Browse(null, null, lNodeId, 10000u, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, out cp, out nextRefs);
+
             if (nextRefs.Count > 0)
             {
-                NodePath.Push(nodeRef.DisplayName.ToString());
-                NodeHistory.Push(NodeList);
-                NodeList = nextRefs;
-                
+
+                if (NodeTreeDict[lNodeId].Children.Count==0)
+                {
+                    foreach (var nextRd in nextRefs)
+                    {
+                        var iNodeId = ExpandedNodeId.ToNodeId(nextRd.NodeId, m_session.NamespaceUris);
+                        NodeTreeDict[iNodeId] = NodeTreeLoc.AddChild(nextRd);
+                        Console.WriteLine("Next: {0}", NodeTreeDict[iNodeId].Data.DisplayName);
+                    }
+                    
+
+                }
+
                 return true;
-      
             }
             else
             {
@@ -136,20 +161,13 @@ namespace NewTestApp
                 return false;
             }
         }
-        
-        public string BrowsePrev()
+
+        public string BrowsePrevTree()
         {
-            string prevLabel = "";
-            if (NodePath.Count > 1)
-            {
-                NodeList = NodeHistory.Pop();
-                NodePath.Pop();
-                prevLabel = NodePath.Peek();
-            }
 
-            return prevLabel;
+            NodeTreeLoc = NodeTreeLoc.Parent;
+            return NodeTreeLoc.Parent.Data.DisplayName.ToString();
         }
-
 
 
 
@@ -173,6 +191,23 @@ namespace NewTestApp
             m_subscription.ApplyChanges();
 
             
+        }
+        public void RemoveMonitoredItem(NodeId rNodeId)
+        {
+            
+            foreach (MonitoredItem monitorItem in m_subscription.MonitoredItems)
+            {
+                if (monitorItem.ResolvedNodeId == rNodeId)
+                {
+                    m_subscription.RemoveItem(monitorItem);
+                    if (subDict.ContainsKey(rNodeId))
+                    {
+                        subDict.Remove(rNodeId);
+                    }
+
+                    break;
+                }
+            }
         }
         public void MonitoredItem_Notification(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
         {

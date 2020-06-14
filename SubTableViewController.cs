@@ -157,8 +157,9 @@ namespace NewTestApp
                     // Delete the row from the data source.
                     var node = objects[indexPath.Row] as MonitorValue;
                     objects.RemoveAt(indexPath.Row);
-                    controller.OpcUa.subDict.Remove(node.monItem.ResolvedNodeId);
-                    controller.OpcUa.m_subscription.RemoveItem(node.monItem);
+                    
+                    controller.OpcUa.RemoveMonitoredItem(node.monItem.ResolvedNodeId);
+
                     controller.TableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Fade);
                 }
                 else if (editingStyle == UITableViewCellEditingStyle.Insert)

@@ -34,19 +34,15 @@ namespace NewTestApp
             NavigationItem.LeftBarButtonItem = backButton;
   
             TableView.Source = dataSource = new DataSource(this);
-            for (int i = 0; i < rootvc.OpcUa.NodeList.Count; i++)
+            foreach(var ii in rootvc.OpcUa.NodeTreeLoc.Children)
             {
-                dataSource.Objects.Insert(0, rootvc.OpcUa.NodeList[i]);
-
+                dataSource.Objects.Insert(0, ii);
                 using (var indexPath = NSIndexPath.FromRowSection(0, 0))
                 {
                     TableView.InsertRows(new[] { indexPath }, UITableViewRowAnimation.Automatic);
 
                 }
             }
-            
-
-
         }
 
         public override void ViewWillAppear(bool animated)
@@ -64,10 +60,10 @@ namespace NewTestApp
         {
             MainSplitViewController rootvc = (MainSplitViewController)SplitViewController;
 
-            backButton.Title = "<" + " " + rootvc.OpcUa.BrowsePrev();
+            backButton.Title = "<" + " " + rootvc.OpcUa.BrowsePrevTree();
             this.NavigationItem.LeftBarButtonItem = backButton;
             dataSource.Objects.Clear();
-            foreach (var rd in rootvc.OpcUa.NodeList)
+            foreach (var rd in rootvc.OpcUa.NodeTreeLoc.Children)
             {
                 dataSource.Objects.Add(rd);
 
@@ -82,8 +78,8 @@ namespace NewTestApp
             if (segue.Identifier == "showDetail")
             {
                 var indexPath = TableView.IndexPathForSelectedRow;
-                var item = dataSource.Objects[indexPath.Row] as ReferenceDescription;
-
+                var indexTreeNode = dataSource.Objects[indexPath.Row] as TreeNode<ReferenceDescription>;
+                var item = indexTreeNode.Data;
                 
                 var controller = (DetailViewController)((UINavigationController)segue.DestinationViewController).TopViewController;
       
@@ -102,19 +98,20 @@ namespace NewTestApp
                 MainSplitViewController rootvc = (MainSplitViewController)SplitViewController;
 
                 var indexPath = TableView.IndexPathForSelectedRow;
-                var item = dataSource.Objects[indexPath.Row] as ReferenceDescription;
-               
-                if (rootvc.OpcUa.BrowseNext(item))
+                var indexTreeNode = dataSource.Objects[indexPath.Row] as TreeNode<ReferenceDescription>;
+                var item = indexTreeNode.Data;
+
+                if (rootvc.OpcUa.BrowseNextTree(indexTreeNode))
                 {
                     backButton.Title = "<"+" " + item.DisplayName.ToString();
                     dataSource.Objects.Clear();
                     
                     
-                    foreach (var rd in rootvc.OpcUa.NodeList)
+                    foreach (var rd in rootvc.OpcUa.NodeTreeLoc.Children)
                     {
                         dataSource.Objects.Add(rd);
-                        Console.WriteLine(rd.DisplayName);
-                        Console.WriteLine(rd.TypeDefinition.ToString());
+                        Console.WriteLine(rd.Data.DisplayName);
+                        Console.WriteLine(rd.Data.TypeDefinition.ToString());
 
                         
                     }
@@ -122,7 +119,9 @@ namespace NewTestApp
                     TableView.ReloadData();
                     return false;
                 }
+                rootvc.OpcUa.NodeTreeLoc = rootvc.OpcUa.NodeTreeLoc.Parent;
             }
+            
             return base.ShouldPerformSegue(segueIdentifier, sender);
         }
 
@@ -157,7 +156,8 @@ namespace NewTestApp
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
                 var cell = tableView.DequeueReusableCell(CellIdentifier, indexPath);
-                var node = objects[indexPath.Row] as ReferenceDescription;
+                var cellTreeNode = objects[indexPath.Row] as TreeNode<ReferenceDescription>;
+                var node = cellTreeNode.Data;
                 cell.TextLabel.Text = node.DisplayName.ToString();
                 Console.WriteLine(node.NodeClass.ToString());
                 if (node.NodeClass.ToString() == "Object")

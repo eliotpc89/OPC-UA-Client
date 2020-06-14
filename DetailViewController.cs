@@ -75,7 +75,7 @@ namespace NewTestApp
 
                 
             }
-            var dispName = rootvc.OpcUa.NodePath.Peek() + "." + litem.DisplayName.ToString();
+            var dispName = rootvc.OpcUa.NodeTreeLoc.Data.DisplayName + "." + litem.DisplayName.ToString();
             rootvc.OpcUa.CreateMonitoredItem(localNodeid, dispName, monitoredItem);
             rootvc.OpcUa.subDict[localNodeid] = new MonitorValue(monitoredItem, valData);
             SubscribeSwitch.SetState(subscribed, false);
@@ -93,24 +93,10 @@ namespace NewTestApp
         {
             base.ViewWillDisappear(animated);
 
-
             if (!SubscribeSwitch.On)
             {
-                foreach (MonitoredItem monitorItem in rootvc.OpcUa.m_subscription.MonitoredItems)
-                {
-                    if (monitorItem.ResolvedNodeId == localNodeid)
-                    {
-                        rootvc.OpcUa.m_subscription.RemoveItem(monitorItem);
-                        if (rootvc.OpcUa.subDict.ContainsKey(localNodeid))
-                        {
-                            rootvc.OpcUa.subDict.Remove(localNodeid);
-                        }
-                        
-                        break;
-                    }
-                }
+                rootvc.OpcUa.RemoveMonitoredItem(localNodeid);
             }
-
         }
 
         public override void DidReceiveMemoryWarning()

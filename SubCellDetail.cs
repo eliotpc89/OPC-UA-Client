@@ -42,7 +42,7 @@ namespace NewTestApp
         public override void LayoutSubviews ()
         {
             base.LayoutSubviews ();
-            var padding = 15;
+            int padding = 30;
             tagName.Frame = new CGRect (padding, 0, ContentView.Bounds.Width / 2.0-padding, ContentView.Bounds.Height);
             tagValue.Frame = new CGRect (ContentView.Bounds.Width / 2.0+padding, 0, ContentView.Bounds.Width / 2.0-2*padding, ContentView.Bounds.Height);
         }
