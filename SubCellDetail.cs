@@ -15,7 +15,7 @@ namespace NewTestApp
         
         public SubCellDetail (NSString cellId) : base (UITableViewCellStyle.Default, cellId)
         {
-
+            
             tagName = new UILabel()
             {
 
@@ -38,7 +38,7 @@ namespace NewTestApp
             tagName.Text = name;
             tagValue.Text = value;
         }
-        
+
         public override void LayoutSubviews ()
         {
             base.LayoutSubviews ();

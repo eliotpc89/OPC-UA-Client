@@ -30,13 +30,22 @@ namespace NewTestApp
             
             backButton = new UIBarButtonItem("",UIBarButtonItemStyle.Plain, AddNewItem);
             backButton.AccessibilityLabel = "addButton";
-            
+            if (rootvc.OpcUa.NodeTreeLoc.Data == rootvc.OpcUa.NodeTreeRoot.Data)
+            {
+                backButton.Title = "";
+                
+            }
+            else
+            {
+                backButton.Title = "<" + " " + rootvc.OpcUa.NodeTreeLoc.Data.DisplayName;
+                
+            }
             NavigationItem.LeftBarButtonItem = backButton;
   
             TableView.Source = dataSource = new DataSource(this);
             foreach(var ii in rootvc.OpcUa.NodeTreeLoc.Children)
             {
-                dataSource.Objects.Insert(0, ii);
+                dataSource.Objects.Add(ii);
                 using (var indexPath = NSIndexPath.FromRowSection(0, 0))
                 {
                     TableView.InsertRows(new[] { indexPath }, UITableViewRowAnimation.Automatic);
@@ -59,9 +68,19 @@ namespace NewTestApp
         void AddNewItem(object sender, EventArgs args)
         {
             MainSplitViewController rootvc = (MainSplitViewController)SplitViewController;
-
-            backButton.Title = "<" + " " + rootvc.OpcUa.BrowsePrevTree();
-            this.NavigationItem.LeftBarButtonItem = backButton;
+            rootvc.OpcUa.BrowsePrevTree();
+            if (rootvc.OpcUa.NodeTreeLoc.Data == rootvc.OpcUa.NodeTreeRoot.Data)
+            {
+                backButton.Title = "";
+               
+            }
+            else
+            {
+                backButton.Title = "<" + " " + rootvc.OpcUa.NodeTreeLoc.Data.DisplayName;
+                this.NavigationItem.LeftBarButtonItem = backButton;
+            }
+            
+            
             dataSource.Objects.Clear();
             foreach (var rd in rootvc.OpcUa.NodeTreeLoc.Children)
             {
@@ -80,9 +99,10 @@ namespace NewTestApp
                 var indexPath = TableView.IndexPathForSelectedRow;
                 var indexTreeNode = dataSource.Objects[indexPath.Row] as TreeNode<ReferenceDescription>;
                 var item = indexTreeNode.Data;
-                
+                MainSplitViewController rootvc = (MainSplitViewController)SplitViewController;
+
                 var controller = (DetailViewController)((UINavigationController)segue.DestinationViewController).TopViewController;
-      
+                controller.OpcUa = rootvc.OpcUa;
                 controller.SetDetailItem(item) ;
                 controller.NavigationItem.LeftBarButtonItem = SplitViewController.DisplayModeButtonItem;
                 controller.NavigationItem.LeftItemsSupplementBackButton = true;

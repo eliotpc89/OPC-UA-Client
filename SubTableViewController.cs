@@ -40,24 +40,27 @@ namespace NewTestApp
 
 
         }
-        async void ReloadTable()
+
+        public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
-            while (true)
+
+            if (segue.Identifier == "showDetailOfSub")
             {
-                await Task.Run(async () =>
-                {
-                    InvokeOnMainThread(() =>
-                    {
+                var indexPath = TableView.IndexPathForSelectedRow;
+                var indexMonValue = dataSource.Objects[indexPath.Row] as MonitorValue;
+                NodeId indexNode = indexMonValue.monItem.ResolvedNodeId;
+                var item = OpcUa.NodeTreeDict[indexNode].Data;
 
-                        TableView.ReloadData();
+                var controller = (DetailViewController)((UINavigationController)segue.DestinationViewController).TopViewController;
+                controller.OpcUa = OpcUa;
+                controller.SetDetailItem(item);
+                //controller.NavigationItem.LeftBarButtonItem = SplitViewController.DisplayModeButtonItem;
+                //controller.NavigationItem.LeftItemsSupplementBackButton = true;
 
-                    });
-
-                    await Task.Delay(100); // example purpose only
-                });
 
             }
         }
+      
 
         class DataSource : UITableViewSource
         {
@@ -68,6 +71,7 @@ namespace NewTestApp
             public DataSource(SubTableViewController controller)
             {
                 this.controller = controller;
+                
             }
 
             public IList<object> Objects
@@ -125,16 +129,10 @@ namespace NewTestApp
                 var cell = tableView.DequeueReusableCell(cellId) as SubCellDetail;
                 var node = objects[indexPath.Row] as MonitorValue;
                 
-                //cell = new UITableViewCell(UITableViewCellStyle.Value2, "cell");
-                
-                cell.ResignFirstResponder();
-                // cell.TextLabel.Text = node.monItem.DisplayName;
-                // cell.DetailTextLabel.Text = controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
 
 
 
                 cell= new SubCellDetail(cellId);
-
 
                 PollDataAsync(cell, node, tableView);
 
@@ -143,7 +141,16 @@ namespace NewTestApp
                 return cell;
             }
 
+            public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+            {
+                //use this method we can push to a new viewController
+                //the first parameter is the identifier we set above
 
+                Console.WriteLine("Table Button Pressed{0}", indexPath.ToString());
+                controller.PerformSegue("showDetailOfSub", indexPath);
+
+
+            }
             public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
             {
                 // Return false if you do not want the specified item to be editable.

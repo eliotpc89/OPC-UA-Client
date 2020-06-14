@@ -23,6 +23,10 @@ namespace NewTestApp
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UINavigationItem DetailTitleBar { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITableView DetailViewTable { get; set; }
 
         [Outlet]
@@ -47,6 +51,11 @@ namespace NewTestApp
             if (detailDescriptionLabel != null) {
                 detailDescriptionLabel.Dispose ();
                 detailDescriptionLabel = null;
+            }
+
+            if (DetailTitleBar != null) {
+                DetailTitleBar.Dispose ();
+                DetailTitleBar = null;
             }
 
             if (DetailViewTable != null) {

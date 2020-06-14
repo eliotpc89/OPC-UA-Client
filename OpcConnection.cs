@@ -28,12 +28,12 @@ namespace NewTestApp
 
         public Session m_session { get; private set; }
 
-        public ReferenceDescriptionCollection NodeList { get; set; }
+
         public TreeNode<ReferenceDescription> NodeTreeRoot { get; set; }
         public TreeNode<ReferenceDescription> NodeTreeLoc { get; set; }
         public Dictionary<NodeId, TreeNode<ReferenceDescription>> NodeTreeDict { get; set; }
-        public Stack<String> NodePath { get; set; }
-        public Stack<ReferenceDescriptionCollection> NodeHistory { get; set; }
+
+
         public List<MonitoredItem> SubList { get; set; }
         public Subscription m_subscription { get; set; }
         public string m_sub_val { get; set; }
@@ -97,9 +97,9 @@ namespace NewTestApp
             Console.WriteLine("Step 3 - Browse the server namespace.");
             ReferenceDescriptionCollection refs;
             Byte[] cp;
-            NodeList = new ReferenceDescriptionCollection();
-            NodeHistory = new Stack<ReferenceDescriptionCollection>();
-            NodePath = new Stack<String>();
+  
+
+
             ReferenceDescription rootRef = new ReferenceDescription();
             rootRef.DisplayName = "Root >";
             NodeTreeRoot = new TreeNode<ReferenceDescription>(rootRef);
@@ -113,14 +113,7 @@ namespace NewTestApp
             NodeTreeRoot.Data.NodeId = rootNodeId;
             subDict = new Dictionary<NodeId, MonitorValue>();
             BrowseNextTree(NodeTreeRoot);
-            //m_session.Browse(null, null, ObjectIds.ObjectsFolder, 0u, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, out cp, out refs);
-            //DisplayName: BrowseName, NodeClass"
-            NodePath.Push("");
-            //foreach (var rd in refs)
-            //{
-            //    NodeList.Add(rd);
-            //    NodeTreeDict[ExpandedNodeId.ToNodeId(rd.NodeId,m_session.NamespaceUris)] = NodeTreeRoot.AddChild(rd); ;
-            //}
+
 
 
   

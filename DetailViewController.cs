@@ -12,10 +12,10 @@ namespace NewTestApp
         public DataValue valData { get; set; }
         public MonitoredItem monitoredItem { get; set; }
         private bool editLock { get; set; }
-        MainSplitViewController rootvc { get; set; }
+
         ReferenceDescription litem { get; set; }
         NodeId localNodeid { get; set; }
-        
+        public OpcConnection OpcUa { get; set; }
         public DetailViewController(IntPtr handle) : base(handle)
         {
         }
@@ -49,15 +49,15 @@ namespace NewTestApp
         {
             
             base.ViewDidLoad();
-            rootvc = (MainSplitViewController)SplitViewController;
+
             litem = DetailItem as ReferenceDescription;
-            localNodeid = ExpandedNodeId.ToNodeId(litem.NodeId, rootvc.OpcUa.m_session.NamespaceUris);
-            valData = rootvc.OpcUa.m_session.ReadValue(localNodeid);
-            
-            
+            localNodeid = ExpandedNodeId.ToNodeId(litem.NodeId, OpcUa.m_session.NamespaceUris);
+            valData = OpcUa.m_session.ReadValue(localNodeid);
+            DetailTitleBar.Title = litem.DisplayName.ToString();
+
             DataChangeBox.Text = "";
             bool subscribed = false;
-            foreach (MonitoredItem iMonitorItem in rootvc.OpcUa.m_subscription.MonitoredItems)
+            foreach (MonitoredItem iMonitorItem in OpcUa.m_subscription.MonitoredItems)
             {
                 if (iMonitorItem.ResolvedNodeId == localNodeid)
                 {
@@ -71,13 +71,14 @@ namespace NewTestApp
             if (!subscribed)
             {
                     
-                monitoredItem = new MonitoredItem(rootvc.OpcUa.m_subscription.DefaultItem);
+                monitoredItem = new MonitoredItem(OpcUa.m_subscription.DefaultItem);
 
                 
             }
-            var dispName = rootvc.OpcUa.NodeTreeLoc.Data.DisplayName + "." + litem.DisplayName.ToString();
-            rootvc.OpcUa.CreateMonitoredItem(localNodeid, dispName, monitoredItem);
-            rootvc.OpcUa.subDict[localNodeid] = new MonitorValue(monitoredItem, valData);
+            string dispNamePfx = OpcUa.NodeTreeDict[localNodeid].Parent.Data.DisplayName.ToString();
+            var dispName = dispNamePfx + "." + litem.DisplayName.ToString();
+            OpcUa.CreateMonitoredItem(localNodeid, dispName, monitoredItem);
+            OpcUa.subDict[localNodeid] = new MonitorValue(monitoredItem, valData);
             SubscribeSwitch.SetState(subscribed, false);
             TypeLabelVar.Text = valData.WrappedValue.TypeInfo.ToString();
             var ipath = DetailViewTable.IndexPathsForVisibleRows;
@@ -95,7 +96,7 @@ namespace NewTestApp
 
             if (!SubscribeSwitch.On)
             {
-                rootvc.OpcUa.RemoveMonitoredItem(localNodeid);
+                OpcUa.RemoveMonitoredItem(localNodeid);
             }
         }
 
@@ -115,9 +116,9 @@ namespace NewTestApp
                 {
                    InvokeOnMainThread(() =>
                     {
-                        if (rootvc.OpcUa.subDict.ContainsKey(localNodeid))
+                        if (OpcUa.subDict.ContainsKey(localNodeid))
                         {
-                            detailDescriptionLabel.Text = rootvc.OpcUa.subDict[localNodeid].value.WrappedValue.ToString();//lmonlist[0].Value.ToString();
+                            detailDescriptionLabel.Text = OpcUa.subDict[localNodeid].value.WrappedValue.ToString();//lmonlist[0].Value.ToString();
 
                         }
 
@@ -161,7 +162,7 @@ namespace NewTestApp
             StatusCodeCollection results = null;
             DiagnosticInfoCollection diagnosticInfos = null;
 
-            ResponseHeader responseHeader = rootvc.OpcUa.m_session.Write(
+            ResponseHeader responseHeader = OpcUa.m_session.Write(
                 null,
                 valuesToWrite,
                 out results,
