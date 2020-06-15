@@ -151,6 +151,18 @@
                                     <segue id="14634" destination="14555" kind="show" identifier="showSubs"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="26799" fixedFrame="YES">
+                                <rect key="frame" x="82" y="590" width="249" height="53"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="File Picker">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
+                                </state>
+                                <connections>
+                                    <action selector="OpcUaConnectUp:" destination="26801" id="26800" eventType="touchUpInside"/>
+                                    <segue id="26802" destination="26803" kind="show" identifier="showSubs"/>
+                                    <action selector="UIButton26799_TouchUpInside:" destination="909" id="26804" eventType="touchUpInside"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     </view>
