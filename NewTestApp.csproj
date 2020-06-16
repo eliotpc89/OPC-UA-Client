@@ -104,6 +104,10 @@
     <Compile Include="DetailNavController.designer.cs">
       <DependentUpon>DetailNavController.cs</DependentUpon>
     </Compile>
+    <Compile Include="BrowserViewController.cs" />
+    <Compile Include="BrowserViewController.designer.cs">
+      <DependentUpon>BrowserViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetailViewController.cs" />

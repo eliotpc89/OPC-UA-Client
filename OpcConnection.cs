@@ -27,7 +27,7 @@ namespace NewTestApp
         public EndpointDescription selectedEndpoint { get; private set; }
 
         public Session m_session { get; private set; }
-
+        public SessionReconnectHandler reconnectHandler;
 
         public TreeNode<ReferenceDescription> NodeTreeRoot { get; set; }
         public TreeNode<ReferenceDescription> NodeTreeLoc { get; set; }
@@ -40,7 +40,7 @@ namespace NewTestApp
         public MonitoredItem lastMonitoredItem { get; set; }
         public Dictionary<NodeId, MonitorValue> subDict {get; set;}
         private MonitoredItemNotificationEventHandler m_MonitoredItem_Notification;
-
+        const int ReconnectPeriod = 5;
 
         public void addMonitorValue(NodeId iNodeId, MonitoredItem iMonItem, DataValue iValue)
         {
@@ -90,16 +90,13 @@ namespace NewTestApp
             var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 15000);
             m_MonitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
             Console.WriteLine($"Step 2 - Create a session with your server: {selectedEndpoint.EndpointUrl} ");
-            m_session = Session.Create(config, new ConfiguredEndpoint(null, selectedEndpoint, EndpointConfiguration.Create(config)), false, "", 60000, null, null).GetAwaiter().GetResult();
+            m_session =  Session.Create(config, new ConfiguredEndpoint(null, selectedEndpoint, EndpointConfiguration.Create(config)), false, "", 60000, null, null).GetAwaiter().GetResult();
+            m_session.KeepAlive += Client_KeepAlive;
             m_subscription = new Subscription(m_session.DefaultSubscription) { PublishingInterval = 100 };
             m_session.AddSubscription(m_subscription);
             m_subscription.Create();
             Console.WriteLine("Step 3 - Browse the server namespace.");
-            ReferenceDescriptionCollection refs;
-            Byte[] cp;
-  
-
-
+ 
             ReferenceDescription rootRef = new ReferenceDescription();
             rootRef.DisplayName = "Root >";
             NodeTreeRoot = new TreeNode<ReferenceDescription>(rootRef);
@@ -116,11 +113,36 @@ namespace NewTestApp
 
 
 
-  
-
-
         }
-        
+
+        private void Client_KeepAlive(Session sender, KeepAliveEventArgs e)
+        {
+            if (e.Status != null && ServiceResult.IsNotGood(e.Status))
+            {
+                Console.WriteLine("{0} {1}/{2}", e.Status, sender.OutstandingRequestCount, sender.DefunctRequestCount);
+
+                if (reconnectHandler == null)
+                {
+                    Console.WriteLine("--- RECONNECTING ---");
+                    reconnectHandler = new SessionReconnectHandler();
+                    reconnectHandler.BeginReconnect(sender, ReconnectPeriod * 1000, Client_ReconnectComplete);
+                }
+            }
+        }
+        private void Client_ReconnectComplete(object sender, EventArgs e)
+        {
+            // ignore callbacks from discarded objects.
+            if (!Object.ReferenceEquals(sender, reconnectHandler))
+            {
+                return;
+            }
+
+            m_session = reconnectHandler.Session;
+            reconnectHandler.Dispose();
+            reconnectHandler = null;
+
+            Console.WriteLine("--- RECONNECTED ---");
+        }
 
         public bool BrowseNextTree(TreeNode<ReferenceDescription> treeNode)
         {

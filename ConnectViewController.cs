@@ -15,7 +15,13 @@ namespace NewTestApp
             
         }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            var bvc = new BrowserViewController(allowedUTIs);
 
+            PresentViewController(bvc, true, null);
+        }
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
             base.PrepareForSegue(segue, sender);
