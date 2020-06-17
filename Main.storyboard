@@ -138,7 +138,6 @@
                                 <connections>
                                     <action selector="OpcUaConnectUp:" destination="10759" id="10758" eventType="touchUpInside"/>
                                     <segue id="12169" destination="H1p-Uh-vWS" kind="show" identifier="browseNodes"/>
-                                    <action selector="UIButton10755_TouchUpInside:" destination="909" id="31870" eventType="touchUpInside"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="14543" fixedFrame="YES">

@@ -98,10 +98,9 @@ namespace NewTestApp
                 alertController.DismissViewController(true, null);
             });
             alertController.AddAction(okButton);
-            var cnvc = new ConnectViewController();
             controller.DismissModalViewController(true);
-            controller.PresentViewController(cnvc, true, null);
-            
+       
         }
+        
     }
 }

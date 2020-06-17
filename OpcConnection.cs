@@ -70,7 +70,7 @@ namespace NewTestApp
                 },
                 TransportConfigurations = new TransportConfigurationCollection(),
                 TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
-                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 60000 },
+                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 5000 },
                 TraceConfiguration = new TraceConfiguration()
             };
             config.Validate(ApplicationType.Client).GetAwaiter().GetResult();
@@ -87,7 +87,7 @@ namespace NewTestApp
             };
             //application.CheckApplicationInstanceCertificate(false, 2048).GetAwaiter().GetResult();
 
-            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 15000);
+            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 10000);
             m_MonitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
             Console.WriteLine($"Step 2 - Create a session with your server: {selectedEndpoint.EndpointUrl} ");
             m_session =  Session.Create(config, new ConfiguredEndpoint(null, selectedEndpoint, EndpointConfiguration.Create(config)), false, "", 60000, null, null).GetAwaiter().GetResult();
