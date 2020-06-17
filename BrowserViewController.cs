@@ -4,7 +4,8 @@ using System.IO;
 using UIKit;
 using MobileCoreServices;
 using Newtonsoft.Json;
-
+using ObjCRuntime;
+using System.Threading.Tasks;
 
 namespace NewTestApp
 {
@@ -67,6 +68,27 @@ namespace NewTestApp
     }
     public class dbvcDelegate : UIDocumentBrowserViewControllerDelegate
     {
+        private void ShowAlert(UIViewController controller)
+        {
+
+            UIAlertController alert = UIAlertController.Create("Create File", "Enter file name", UIAlertControllerStyle.Alert);
+
+            alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, action => {
+                // This code is invoked when the user taps on login, and this shows how to access the field values
+                Console.WriteLine("User: {0}", alert.TextFields[0].Text);
+                controller.DismissViewController(true, null);
+            }));
+
+            alert.AddTextField((field) => {
+                //field.Text = true;
+            });
+            controller.PresentViewController(alert, animated: true, completionHandler: null);
+        }
+        public override void DidRequestDocumentCreation(UIDocumentBrowserViewController controller, Action<NSUrl, UIDocumentBrowserImportMode> importHandler)
+        {
+            ShowAlert(controller);
+            controller.DismissModalViewController(true);
+        }
 
         public override void DidPickDocumentsAtUrls(UIDocumentBrowserViewController controller, NSUrl[] documentUrls)
         {

@@ -23,6 +23,7 @@ namespace NewTestApp
         {
             base.ViewDidAppear(animated);
             var controller = new BrowserViewController(allowedUTIs);
+            controller.AllowsPickingMultipleItems = false;
             PresentViewController(controller, true, null);
 
         }

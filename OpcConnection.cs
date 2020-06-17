@@ -40,7 +40,7 @@ namespace NewTestApp
         public MonitoredItem lastMonitoredItem { get; set; }
         public Dictionary<NodeId, MonitorValue> subDict {get; set;}
         private MonitoredItemNotificationEventHandler m_MonitoredItem_Notification;
-        const int ReconnectPeriod = 5;
+        const int ReconnectPeriod = 3;
 
         public void addMonitorValue(NodeId iNodeId, MonitoredItem iMonItem, DataValue iValue)
         {
@@ -69,8 +69,8 @@ namespace NewTestApp
                     AutoAcceptUntrustedCertificates = true
                 },
                 TransportConfigurations = new TransportConfigurationCollection(),
-                TransportQuotas = new TransportQuotas { OperationTimeout = 15000 },
-                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 5000 },
+                TransportQuotas = new TransportQuotas { OperationTimeout = 5000 },
+                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 3000 },
                 TraceConfiguration = new TraceConfiguration()
             };
             config.Validate(ApplicationType.Client).GetAwaiter().GetResult();
@@ -87,7 +87,7 @@ namespace NewTestApp
             };
             //application.CheckApplicationInstanceCertificate(false, 2048).GetAwaiter().GetResult();
 
-            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 10000);
+            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 3000);
             m_MonitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
             Console.WriteLine($"Step 2 - Create a session with your server: {selectedEndpoint.EndpointUrl} ");
             m_session =  Session.Create(config, new ConfiguredEndpoint(null, selectedEndpoint, EndpointConfiguration.Create(config)), false, "", 60000, null, null).GetAwaiter().GetResult();
