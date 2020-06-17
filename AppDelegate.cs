@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using MobileCoreServices;
 using UIKit;
 
 namespace NewTestApp
@@ -8,7 +9,19 @@ namespace NewTestApp
     [Register("AppDelegate")]
     public class AppDelegate : UIResponder, IUIApplicationDelegate
     {
-        
+        private string[] allowedUTIs =  {
+            UTType.UTF8PlainText,
+            UTType.PlainText,
+            UTType.RTF,
+            UTType.PNG,
+            UTType.Text,
+            UTType.PDF,
+            UTType.Image,
+            UTType.JSON,
+            UTType.XML
+
+        };
+
         [Export("window")]
         public UIWindow Window { get; set; }
 
@@ -17,6 +30,17 @@ namespace NewTestApp
         {
             // Override point for customization after application launch.
             // If not required for your application you can safely delete this method
+            // create a new window instance based on the screen size
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            var controller = new BrowserViewController(allowedUTIs);
+            Window.MakeKeyAndVisible();
+
+            Window.RootViewController = controller;
+            // make the window visible
+
+
+
+
             return true;
         }
 

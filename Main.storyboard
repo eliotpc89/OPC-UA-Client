@@ -130,7 +130,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="10755" fixedFrame="YES">
-                                <rect key="frame" x="82" y="444" width="249" height="53"/>
+                                <rect key="frame" x="82" y="342" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Browse Nodes">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -138,10 +138,11 @@
                                 <connections>
                                     <action selector="OpcUaConnectUp:" destination="10759" id="10758" eventType="touchUpInside"/>
                                     <segue id="12169" destination="H1p-Uh-vWS" kind="show" identifier="browseNodes"/>
+                                    <action selector="UIButton10755_TouchUpInside:" destination="909" id="31870" eventType="touchUpInside"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="14543" fixedFrame="YES">
-                                <rect key="frame" x="82" y="517" width="249" height="53"/>
+                                <rect key="frame" x="82" y="403" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Monitor Subscriptions">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -152,7 +153,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="26799" fixedFrame="YES">
-                                <rect key="frame" x="82" y="590" width="249" height="53"/>
+                                <rect key="frame" x="82" y="464" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="File Picker">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -160,7 +161,7 @@
                                 <connections>
                                     <action selector="OpcUaConnectUp:" destination="26801" id="26800" eventType="touchUpInside"/>
                                     <segue id="26802" destination="26803" kind="show" identifier="showSubs"/>
-                                    <action selector="UIButton26799_TouchUpInside:" destination="909" id="26804" eventType="touchUpInside"/>
+                                    <action selector="FileBrowserButton:" destination="909" id="31874" eventType="touchUpInside"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -393,6 +394,23 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="27061" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2005" y="-259"/>
+        </scene>
+        <scene sceneID="29849">
+            <objects>
+                <viewController id="29850" sceneMemberID="viewController" customClass="DummyVC">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="29847"/>
+                        <viewControllerLayoutGuide type="bottom" id="29848"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="29851">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="29852" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1995" y="-1396"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

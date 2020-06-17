@@ -15,12 +15,21 @@ namespace NewTestApp
             
         }
 
+        public ConnectViewController() : base()
+        {
+
+        }
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            var bvc = new BrowserViewController(allowedUTIs);
+            var controller = new BrowserViewController(allowedUTIs);
+            PresentViewController(controller, true, null);
 
-            PresentViewController(bvc, true, null);
+        }
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
         }
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
@@ -79,53 +88,12 @@ namespace NewTestApp
         {
             Console.WriteLine("Picker was Cancelled");
         }
-        partial void UIButton26799_TouchUpInside(UIButton sender)
+
+
+        partial void FileBrowserButton(UIButton sender)
         {
-            string test = "hello world";
-
-            var json = JsonConvert.SerializeObject(test, Newtonsoft.Json.Formatting.Indented);
-
-            // Save to file
-            var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var filename =  Path.Combine(documents,"account2.JSON");
-            File.WriteAllText(filename, json);
-            var picker = new UIDocumentPickerViewController(allowedUTIs, UIDocumentPickerMode.Open);
-            picker.DirectoryUrl = new  NSUrl("file://" +documents);
-            Console.WriteLine(documents);
-            Console.WriteLine(filename);
-            picker.WasCancelled += Picker_WasCancelled;
-            picker.DidPickDocumentAtUrls += (object s, UIDocumentPickedAtUrlsEventArgs e) =>
-            {
-                Console.WriteLine("url = {0}", e.Urls[0].AbsoluteString);
-                //bool success = await MoveFileToApp(didPickDocArgs.Url);  
-                var success = true;
-                string filename = e.Urls[0].LastPathComponent;
-                string msg = success ? string.Format("Successfully imported file '{0}'", filename) : string.Format("Failed to import file '{0}'", filename);
-                // Some invaild file url returns null  
-                NSData data = NSData.FromUrl(e.Urls[0]);
-                if (data != null)
-                {
-                    byte[] dataBytes = new byte[data.Length];
-
-                    System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
-
-                    for (int i = 0; i < dataBytes.Length; i++)
-                    {
-                        Console.WriteLine(dataBytes[i]);
-                    }
-                }
-
-                Console.WriteLine(data + "Completed");
-
-                var alertController = UIAlertController.Create("import", msg, UIAlertControllerStyle.Alert);
-                var okButton = UIAlertAction.Create("OK", UIAlertActionStyle.Default, (obj) =>
-                {
-                    alertController.DismissViewController(true, null);
-                });
-                alertController.AddAction(okButton);
-                PresentViewController(alertController, true, null);
-            };
-            PresentViewController(picker, true, null);
+            var controller = new BrowserViewController(allowedUTIs);
+            PresentViewController(controller, false, null);
         }
     }
 
