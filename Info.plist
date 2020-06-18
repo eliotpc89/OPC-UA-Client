@@ -31,7 +31,7 @@
 	<string>13.4</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
+	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIMainStoryboardFile~ipad</key>
 	<string>Main</string>
@@ -55,5 +55,20 @@
 	<true/>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>JSON</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.json</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

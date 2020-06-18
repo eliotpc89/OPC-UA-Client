@@ -77,17 +77,20 @@ namespace NewTestApp
                 // This code is invoked when the user taps on login, and this shows how to access the field values
                 Console.WriteLine("User: {0}", alert.TextFields[0].Text);
                 controller.DismissViewController(true, null);
+                controller.PerformSegue("PageVcSegue",null);
             }));
 
             alert.AddTextField((field) => {
                 //field.Text = true;
             });
-            controller.PresentViewController(alert, animated: true, completionHandler: null);
+            
+            controller.PresentViewController(alert, animated: true, null);
         }
         public override void DidRequestDocumentCreation(UIDocumentBrowserViewController controller, Action<NSUrl, UIDocumentBrowserImportMode> importHandler)
         {
             ShowAlert(controller);
-            controller.DismissModalViewController(true);
+
+ 
         }
 
         public override void DidPickDocumentsAtUrls(UIDocumentBrowserViewController controller, NSUrl[] documentUrls)

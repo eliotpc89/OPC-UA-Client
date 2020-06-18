@@ -22,9 +22,7 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            var controller = new BrowserViewController(allowedUTIs);
-            controller.AllowsPickingMultipleItems = false;
-            PresentViewController(controller, true, null);
+
 
         }
         public override void ViewDidLoad()
@@ -91,11 +89,7 @@ namespace NewTestApp
         }
 
 
-        partial void FileBrowserButton(UIButton sender)
-        {
-            var controller = new BrowserViewController(allowedUTIs);
-            PresentViewController(controller, false, null);
-        }
+
     }
 
 

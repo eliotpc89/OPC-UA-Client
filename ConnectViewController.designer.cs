@@ -18,17 +18,9 @@ namespace NewTestApp
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField ConnectAddress { get; set; }
 
-        [Action ("FileBrowserButton:")]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        partial void FileBrowserButton (UIKit.UIButton sender);
-
         [Action ("OpcUaConnectUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
         partial void OpcUaConnectUp (UIKit.UIButton sender);
-
-        [Action ("UIButton26799_TouchUpInside:")]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        partial void UIButton26799_TouchUpInside (UIKit.UIButton sender);
 
         void ReleaseDesignerOutlets ()
         {
