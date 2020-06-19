@@ -23,7 +23,7 @@ namespace NewTestApp
 
 
             TableView.Source = dataSource = new DataSource(this);
-            Console.WriteLine(OpcUa.subDict.Count);
+            
             foreach(var ii in OpcUa.subDict)
             {
                 var iinode = ii.Value;

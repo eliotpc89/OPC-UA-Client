@@ -9,7 +9,9 @@ namespace NewTestApp
 {
     public partial class ConnectViewController : UIViewController
     {
+        public string cvcFileName;
         public OpcConnection OpcUa;
+        
         public ConnectViewController (IntPtr handle) : base (handle)
         {
             
@@ -28,6 +30,16 @@ namespace NewTestApp
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+            NSData data = new NSData();
+            data = NSData.FromFile(cvcFileName);
+            if (data != null)
+            {
+                Console.WriteLine("CVC{0}", cvcFileName);
+                ConnectAddress.Text = cvcFileName;
+            }
+                OpcUa = new OpcConnection(cvcFileName);
+            
+            
 
         }
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
@@ -60,7 +72,11 @@ namespace NewTestApp
 
         partial void OpcUaConnectUp(UIButton sender)
         {
-            OpcUa = new OpcConnection();
+            if (OpcUa == null)
+            {
+                OpcUa = new OpcConnection();
+            }
+            
             OpcUa.Connect(ConnectAddress.Text.ToString());
         
 

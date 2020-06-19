@@ -26,7 +26,8 @@ namespace NewTestApp
                     
             };
 
-
+        public string fileName;
+        public string fileData;
         public BrowserViewController(IntPtr handle) : base(handle)
         {
 
@@ -56,6 +57,20 @@ namespace NewTestApp
             this.Delegate = test;
             
         }
+
+        public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
+        {
+            base.PrepareForSegue(segue, sender);
+
+            if (segue.Identifier == "PageVcSegue")
+            {
+                var nextVc = segue.DestinationViewController
+                                         as ConnectViewController;
+                nextVc.cvcFileName = fileName;
+
+            }
+        }
+
         public virtual void DidImportDocument (UIDocumentBrowserViewController controller, NSUrl sourceUrl, NSUrl destinationUrl)
         {
             
@@ -72,12 +87,15 @@ namespace NewTestApp
         {
 
             UIAlertController alert = UIAlertController.Create("Create File", "Enter file name", UIAlertControllerStyle.Alert);
-
+            var ctrlr = controller as BrowserViewController;
             alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, action => {
                 // This code is invoked when the user taps on login, and this shows how to access the field values
                 Console.WriteLine("User: {0}", alert.TextFields[0].Text);
+                ctrlr.fileName = alert.TextFields[0].Text +".json";
                 controller.DismissViewController(true, null);
                 controller.PerformSegue("PageVcSegue",null);
+                
+                Console.WriteLine(ctrlr.fileName);
             }));
 
             alert.AddTextField((field) => {
@@ -95,14 +113,16 @@ namespace NewTestApp
 
         public override void DidPickDocumentsAtUrls(UIDocumentBrowserViewController controller, NSUrl[] documentUrls)
         {
-            //base.DidPickDocumentsAtUrls(controller, documentUrls);
+            
             Console.WriteLine("url = {0}", documentUrls[0].AbsoluteString);
             //bool success = await MoveFileToApp(didPickDocArgs.Url);  
             var success = true;
             string filename = documentUrls[0].LastPathComponent;
             string msg = success ? string.Format("Successfully imported file '{0}'", filename) : string.Format("Failed to import file '{0}'", filename);
-            // Some invaild file url returns null  
+            var ctrlr = controller as BrowserViewController;
             NSData data = NSData.FromUrl(documentUrls[0]);
+            ctrlr.fileData = data.ToString();
+            ctrlr.fileName = filename;
             if (data != null)
             {
                 byte[] dataBytes = new byte[data.Length];
@@ -124,7 +144,7 @@ namespace NewTestApp
             });
             alertController.AddAction(okButton);
             controller.DismissModalViewController(true);
-       
+            controller.PerformSegue("PageVcSegue", null);
         }
         
     }

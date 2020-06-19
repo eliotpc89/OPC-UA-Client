@@ -3,10 +3,11 @@ using Opc.Ua.Client;
 using Opc.Ua.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net;
-using System.ComponentModel;
-using UIKit;
+
+using System.IO;
+using Newtonsoft.Json;
+using Foundation;
+
 namespace NewTestApp
 {
 
@@ -14,12 +15,25 @@ namespace NewTestApp
     {
         public MonitoredItem monItem;
         public DataValue value;
+        public string dataName;
         public MonitorValue(MonitoredItem iMonItem, DataValue iValue)
         {
 
             monItem = iMonItem;
             value = iValue;
-
+            
+            
+        }
+    }
+    public class SavedObject
+    {
+        public IEnumerable<MonitoredItem> fileSubMon;
+        public string fileSavedAddress;
+        public SavedObject() { }
+        public SavedObject(OpcConnection opcCon)
+        {
+            fileSavedAddress = opcCon.savedAddress;
+            fileSubMon  = opcCon.m_subscription.MonitoredItems;
         }
     }
     public class OpcConnection
@@ -33,10 +47,13 @@ namespace NewTestApp
         public TreeNode<ReferenceDescription> NodeTreeLoc { get; set; }
         public Dictionary<NodeId, TreeNode<ReferenceDescription>> NodeTreeDict { get; set; }
 
-
+        public string savedAddress { get; set; }
         public List<MonitoredItem> SubList { get; set; }
         public Subscription m_subscription { get; set; }
         public string m_sub_val { get; set; }
+        public string filePath { get; set; }
+        public string fileName { get; set; }
+        public string fileContents { get; set; }
         public MonitoredItem lastMonitoredItem { get; set; }
         public Dictionary<NodeId, MonitorValue> subDict {get; set;}
         private MonitoredItemNotificationEventHandler m_MonitoredItem_Notification;
@@ -47,13 +64,34 @@ namespace NewTestApp
             MonitorValue newMonVal = new MonitorValue(iMonItem, iValue);
             subDict[iNodeId] = newMonVal;
         }
-        public OpcConnection() { }
+        public OpcConnection()
+        {
+            filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+        public OpcConnection(string fname)
+        {
+            filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            fileName = fname;
+            var savedObject = new SavedObject();
+            string fileArr = filePath+"/"+fileName;
+            NSData data = new NSData();
+            data = NSData.FromFile(fileArr);
+            if (data != null)
+            {
+                savedObject = JsonConvert.DeserializeObject<SavedObject>(data.ToString());
+                Connect(savedObject.fileSavedAddress);
+                CreateMonitoredItems(savedObject.fileSubMon);
+            }
+            
+            
+            
 
+        }
 
         public void Connect(string OpcAddress)
 
         {
-
+            savedAddress = OpcAddress;
             Console.WriteLine("Step 1 - Create application configuration and certificate.");
             var config = new ApplicationConfiguration()
             {
@@ -184,9 +222,19 @@ namespace NewTestApp
             return NodeTreeLoc.Parent.Data.DisplayName.ToString();
         }
 
-
-
-        public void CreateMonitoredItem(NodeId nodeId, string displayName, MonitoredItem monitoredItem)
+        public void CreateMonitoredItems(IEnumerable<MonitoredItem> fSubMon)
+        {
+            foreach (var ii in fSubMon)
+            {
+                ii.Notification += m_MonitoredItem_Notification;
+                DataValue initValue = new DataValue();
+                addMonitorValue(ii.ResolvedNodeId, ii, initValue);
+                
+            }
+            m_subscription.AddItems(fSubMon);
+            m_subscription.ApplyChanges();
+        }
+            public void CreateMonitoredItem(NodeId nodeId, string displayName, MonitoredItem monitoredItem)
         {
 
             // add the new monitored item.
@@ -204,8 +252,17 @@ namespace NewTestApp
             lastMonitoredItem = monitoredItem;
             m_subscription.AddItem(monitoredItem);
             m_subscription.ApplyChanges();
+            SaveFile();
+;
 
-            
+        }
+        public void SaveFile()
+        {
+            var json = new SavedObject(this);
+
+            var fname = Path.Combine(filePath, fileName);
+            File.WriteAllText(fname, JsonConvert.SerializeObject(json));
+
         }
         public void RemoveMonitoredItem(NodeId rNodeId)
         {
@@ -223,6 +280,7 @@ namespace NewTestApp
                     break;
                 }
             }
+            SaveFile();
         }
         public void MonitoredItem_Notification(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
         {
