@@ -78,6 +78,11 @@ namespace NewTestApp
             data = NSData.FromFile(fileArr);
             if (data != null)
             {
+                if (subDict != null)
+                {
+                    subDict.Clear();
+                }
+                
                 savedObject = JsonConvert.DeserializeObject<SavedObject>(data.ToString());
                 Connect(savedObject.fileSavedAddress);
                 CreateMonitoredItems(savedObject.fileSubMon);
@@ -224,6 +229,7 @@ namespace NewTestApp
 
         public void CreateMonitoredItems(IEnumerable<MonitoredItem> fSubMon)
         {
+            m_subscription.RemoveItems(m_subscription.MonitoredItems);
             foreach (var ii in fSubMon)
             {
                 ii.Notification += m_MonitoredItem_Notification;

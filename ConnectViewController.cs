@@ -16,7 +16,10 @@ namespace NewTestApp
         {
             
         }
-
+        public void SetConnectAddress(string nAddress)
+        {
+            ConnectAddress.Text = nAddress;
+        }
         public ConnectViewController() : base()
         {
 
@@ -30,14 +33,7 @@ namespace NewTestApp
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            NSData data = new NSData();
-            data = NSData.FromFile(cvcFileName);
-            if (data != null)
-            {
-                Console.WriteLine("CVC{0}", cvcFileName);
-                ConnectAddress.Text = cvcFileName;
-            }
-                OpcUa = new OpcConnection(cvcFileName);
+
             
             
 

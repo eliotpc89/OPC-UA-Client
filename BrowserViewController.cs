@@ -67,7 +67,15 @@ namespace NewTestApp
                 var nextVc = segue.DestinationViewController
                                          as ConnectViewController;
                 nextVc.cvcFileName = fileName;
-
+                NSData data = new NSData();
+                data = NSData.FromFile(fileName);
+                if (data != null)
+                {
+                    Console.WriteLine("CVC{0}", fileName);
+                    nextVc.SetConnectAddress(fileName);
+                }
+                nextVc.Dispose();
+                nextVc.OpcUa = new OpcConnection(fileName);
             }
         }
 

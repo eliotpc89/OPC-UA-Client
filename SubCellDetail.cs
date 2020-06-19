@@ -43,7 +43,7 @@ namespace NewTestApp
         {
             base.LayoutSubviews ();
             int padding = 30;
-            tagName.Frame = new CGRect (padding, 0, ContentView.Bounds.Width / 2.0-padding, ContentView.Bounds.Height);
+            tagName.Frame = new CGRect (padding, 0, ContentView.Bounds.Width, ContentView.Bounds.Height);
             tagValue.Frame = new CGRect (ContentView.Bounds.Width / 2.0+padding, 0, ContentView.Bounds.Width / 2.0-2*padding, ContentView.Bounds.Height);
         }
 
