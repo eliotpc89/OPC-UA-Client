@@ -15,7 +15,11 @@ namespace NewTestApp
         public SubTableViewController (IntPtr handle) : base (handle)
         {
         }
-
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            
+        }
 
         public override void ViewDidLoad()
         {
@@ -24,20 +28,18 @@ namespace NewTestApp
 
             TableView.Source = dataSource = new DataSource(this);
             
-            foreach(var ii in OpcUa.subDict)
+            foreach (var ii in OpcUa.subDict)
             {
                 var iinode = ii.Value;
                 dataSource.Objects.Add(iinode);
-            
+
                 using (var indexPath = NSIndexPath.FromRowSection(0, 0))
                 {
                     TableView.InsertRows(new[] { indexPath }, UITableViewRowAnimation.Automatic);
-                    
+
                 }
             }
             TableView.ReloadData();
-            //ReloadTable();
-
 
         }
 
@@ -49,7 +51,7 @@ namespace NewTestApp
                 var indexPath = TableView.IndexPathForSelectedRow;
                 var indexMonValue = dataSource.Objects[indexPath.Row] as MonitorValue;
                 NodeId indexNode = indexMonValue.monItem.ResolvedNodeId;
-                var item = OpcUa.NodeTreeDict[indexNode].Data;
+                var item = OpcUa.subDict[indexNode];
 
                 var controller = (DetailViewController)((UINavigationController)segue.DestinationViewController).TopViewController;
                 controller.OpcUa = OpcUa;

@@ -76,16 +76,18 @@ namespace NewTestApp
             string fileArr = filePath+"/"+fileName;
             NSData data = new NSData();
             data = NSData.FromFile(fileArr);
+
             if (data != null)
             {
                 if (subDict != null)
                 {
                     subDict.Clear();
                 }
-                
+                subDict = new Dictionary<NodeId, MonitorValue>();
                 savedObject = JsonConvert.DeserializeObject<SavedObject>(data.ToString());
                 Connect(savedObject.fileSavedAddress);
                 CreateMonitoredItems(savedObject.fileSubMon);
+                
             }
             
             
@@ -96,6 +98,7 @@ namespace NewTestApp
         public void Connect(string OpcAddress)
 
         {
+
             savedAddress = OpcAddress;
             Console.WriteLine("Step 1 - Create application configuration and certificate.");
             var config = new ApplicationConfiguration()
@@ -154,7 +157,7 @@ namespace NewTestApp
             subDict = new Dictionary<NodeId, MonitorValue>();
             BrowseNextTree(NodeTreeRoot);
 
-
+            
 
         }
 
@@ -235,6 +238,7 @@ namespace NewTestApp
                 ii.Notification += m_MonitoredItem_Notification;
                 DataValue initValue = new DataValue();
                 addMonitorValue(ii.ResolvedNodeId, ii, initValue);
+
                 
             }
             m_subscription.AddItems(fSubMon);
@@ -298,8 +302,9 @@ namespace NewTestApp
             subDict[monitoredItem.ResolvedNodeId] = new MonitorValue( monitoredItem, notification.Value);
             foreach (var value in monitoredItem.DequeueValues())
             {
-                Console.WriteLine("{0}: {1}, {2}, {3}", monitoredItem.DisplayName, value.Value, value.SourceTimestamp, value.StatusCode);
+                //Console.WriteLine("{0}: {1}, {2}, {3}", monitoredItem.DisplayName, value.Value, value.SourceTimestamp, value.StatusCode);
                 //subDict[monitoredItem.ResolvedNodeId].value=value;
+                Console.WriteLine("LastValue: {0}", monitoredItem.;
             }
             m_sub_val = notification.Value.ToString();
             

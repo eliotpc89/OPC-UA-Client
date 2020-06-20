@@ -74,7 +74,11 @@ namespace NewTestApp
                     Console.WriteLine("CVC{0}", fileName);
                     nextVc.SetConnectAddress(fileName);
                 }
-                nextVc.Dispose();
+                if (!(nextVc.OpcUa is null))
+                {
+                    nextVc.OpcUa.m_session.CloseSession(null, true);
+                    
+                }
                 nextVc.OpcUa = new OpcConnection(fileName);
             }
         }

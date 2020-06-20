@@ -1,6 +1,7 @@
 using Foundation;
 using MobileCoreServices;
 using Newtonsoft.Json;
+using Opc.Ua;
 using System;
 using System.IO;
 using UIKit;
@@ -42,6 +43,28 @@ namespace NewTestApp
         {
             base.PrepareForSegue(segue, sender);
 
+            if (segue.Identifier == "RetToBrowser")
+            {
+                var nextVc = segue.DestinationViewController
+                                         as MainSplitViewController;
+
+                if (OpcUa != null)
+                {
+
+                    OpcUa.m_session.CloseSession(null, true);
+                    OpcUa.m_session.Dispose();
+                    OpcUa.m_subscription.Dispose();
+                    OpcUa.NodeTreeDict.Clear();
+                    OpcUa.subDict.Clear();
+                    
+
+                    OpcUa.subDict.Clear();
+                    
+
+                }
+            }
+
+
             if (segue.Identifier == "browseNodes")
             {
                 var nextVc = segue.DestinationViewController
@@ -53,7 +76,7 @@ namespace NewTestApp
                     nextVc.OpcUa = OpcUa;
                 }
             }
-               
+
             if (segue.Identifier == "showSubs")
             {
                 var nextVc = segue.DestinationViewController
@@ -61,6 +84,13 @@ namespace NewTestApp
 
                 nextVc.OpcUa = OpcUa;
                 Console.WriteLine("ShowSubs");
+                OpcUa.subDict.Clear();
+                foreach(var ii in nextVc.OpcUa.m_subscription.MonitoredItems)
+                {
+                    var dv = new DataValue();
+                    OpcUa.subDict[ii.ResolvedNodeId] = new MonitorValue(ii, dv);
+                }
+
             }
 
             

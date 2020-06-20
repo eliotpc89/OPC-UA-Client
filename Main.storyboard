@@ -162,7 +162,7 @@
                                 </state>
                                 <connections>
                                     <action selector="OpcUaConnectUp:" destination="26801" id="26800" eventType="touchUpInside"/>
-                                    <segue id="34970" destination="27059" kind="presentation"/>
+                                    <segue id="34970" destination="27059" kind="presentation" identifier="RetToBrowser"/>
                                 </connections>
                             </button>
                         </subviews>
