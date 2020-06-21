@@ -28,8 +28,9 @@ namespace NewTestApp
 
 
             TableView.Source = dataSource = new DataSource(this);
-            
-            foreach (var ii in OpcUa.subDict.Values)
+            List<MonitorValue> nodeList = new List<MonitorValue>(OpcUa.subDict.Values);
+
+            foreach (MonitorValue ii in nodeList)
             {
                 var iinode = ii;
                 dataSource.Objects.Add(iinode);
@@ -170,7 +171,7 @@ namespace NewTestApp
                     var node = objects[indexPath.Row] as MonitorValue;
                     objects.RemoveAt(indexPath.Row);
                     
-                    controller.OpcUa.RemoveMonitoredItem(node.monItem.ResolvedNodeId);
+                    controller.OpcUa.RemoveMonitoredItem(node.monItem.ResolvedNodeId, true);
 
                     controller.TableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Fade);
                 }

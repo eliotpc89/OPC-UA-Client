@@ -29,7 +29,7 @@ namespace NewTestApp
         {
             base.ViewDidAppear(animated);
 
-
+            NavigationController.Title = cvcFileName;
         }
         public override void ViewDidLoad()
         {
@@ -43,6 +43,7 @@ namespace NewTestApp
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
+            TitleFileName.Text = cvcFileName;
             if (!fileIsNew)
             {
 
@@ -68,9 +69,9 @@ namespace NewTestApp
 
                 if (OpcUa != null)
                 {
-
+                    
                     OpcUa.ResetOpc();
-                    OpcUa = null;
+                    //OpcUa = null;
 
                 }
             }
@@ -117,6 +118,7 @@ namespace NewTestApp
 
 
 
+
         }
         private string[] allowedUTIs =  {
                     UTType.UTF8PlainText,
@@ -141,7 +143,10 @@ namespace NewTestApp
         }
 
 
-
+        partial void ReturnToFileBrowserButton(UIButton sender)
+        {
+            NavigationController.PopToRootViewController(true);
+        }
     }
 
 

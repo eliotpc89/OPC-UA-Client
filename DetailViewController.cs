@@ -86,8 +86,7 @@ namespace NewTestApp
             {
                 valData = new DataValue(new Variant((int)0));
                 monitoredItem = new MonitoredItem(OpcUa.m_subscription.DefaultItem);
-                OpcUa.CreateMonitoredItem(localNodeid, dispName, monitoredItem);
-                OpcUa.subDict[localNodeid] = new MonitorValue(monitoredItem, valData);
+                OpcUa.CreateMonitoredItem(localNodeid, dispName, true);
                 SubscribeSwitch.SetState(subscribed, false);
                 
             }
@@ -103,7 +102,7 @@ namespace NewTestApp
 
             if (!SubscribeSwitch.On)
             {
-                OpcUa.RemoveMonitoredItem(localNodeid);
+                OpcUa.RemoveMonitoredItem(localNodeid, true);
             }
         }
 
@@ -127,7 +126,7 @@ namespace NewTestApp
                         {
                             detailDescriptionLabel.Text = OpcUa.subDict[localNodeid].value.WrappedValue.ToString();//lmonlist[0].Value.ToString();
                             valData = OpcUa.subDict[localNodeid].value;
-                            TypeLabelVar.Text = OpcUa.subDict[localNodeid].value.WrappedValue.TypeInfo.ToString();
+                            TypeLabelVar.Text = typName;
 
                         }
 

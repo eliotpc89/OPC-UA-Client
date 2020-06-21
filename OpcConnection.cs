@@ -38,7 +38,7 @@ namespace NewTestApp
     public class OpcConnection
     {
         public EndpointDescription selectedEndpoint { get; private set; }
-
+        private bool connected { get; set; }
         public Session m_session { get; private set; }
         public SessionReconnectHandler reconnectHandler;
 
@@ -54,16 +54,12 @@ namespace NewTestApp
         public string appDataPath { get; set; }
         public string fileName { get; set; }
         public string fileContents { get; set; }
-        public MonitoredItem lastMonitoredItem { get; set; }
+        public MonitoredItem monitoredItem { get; set; }
         public Dictionary<NodeId, MonitorValue> subDict { get; set; }
         public MonitoredItemNotificationEventHandler m_MonitoredItem_Notification;
         const int ReconnectPeriod = 3;
 
-        public void addMonitorValue(NodeId iNodeId, MonitoredItem iMonItem, DataValue iValue)
-        {
-            MonitorValue newMonVal = new MonitorValue(iMonItem, iValue);
-            subDict[iNodeId] = newMonVal;
-        }
+
         public OpcConnection()
         {
             filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -76,18 +72,19 @@ namespace NewTestApp
             string fileArr = filePath + "/" + fileName;
             NSData data = new NSData();
             data = NSData.FromFile(fileArr);
-            //Console.WriteLine(data);
+            Console.WriteLine(fileArr);
+            Console.WriteLine(data);
             if (data != null)
             {
-                
-                if (subDict != null)
+                if(!(subDict is null))
                 {
-                    subDict.Clear();
+                    ResetOpc();
                 }
-                subDict = new Dictionary<NodeId, MonitorValue>();
+                
                 savedObject = JsonConvert.DeserializeObject<SavedObject>(data.ToString());
                 Connect(savedObject.fileSavedAddress);
                 CreateMonitoredItems(savedObject.fileSubMon);
+
 
             }
 
@@ -96,16 +93,17 @@ namespace NewTestApp
         }
         public void ResetOpc()
         {
-            List<NodeId> nodeList = new List<NodeId>();
-            foreach(var ii in subDict)
+            connected = false;
+            List<NodeId> nodeList = new List<NodeId>(subDict.Keys);
+
+            foreach(NodeId ii in nodeList)
             {
-                nodeList.Add(ii.Key);
+                RemoveMonitoredItem(ii, false);
+                Console.WriteLine("removing item");
             }
-            foreach(var ii in nodeList)
-            {
-                RemoveMonitoredItem(ii);
-            }
+
             m_session.CloseSession(null, true);
+            
         }
         public void Connect(string OpcAddress)
 
@@ -155,6 +153,7 @@ namespace NewTestApp
             m_subscription = new Subscription(m_session.DefaultSubscription) { PublishingInterval = 100 };
             m_session.AddSubscription(m_subscription);
             m_subscription.Create();
+            connected = true;
             Console.WriteLine("Step 3 - Browse the server namespace.");
 
             ReferenceDescription rootRef = new ReferenceDescription();
@@ -177,7 +176,7 @@ namespace NewTestApp
 
         private void Client_KeepAlive(Session sender, KeepAliveEventArgs e)
         {
-            if (e.Status != null && ServiceResult.IsNotGood(e.Status))
+            if (connected && e.Status != null && ServiceResult.IsNotGood(e.Status))
             {
                 Console.WriteLine("{0} {1}/{2}", e.Status, sender.OutstandingRequestCount, sender.DefunctRequestCount);
 
@@ -249,24 +248,22 @@ namespace NewTestApp
         public void CreateMonitoredItems(IEnumerable<MonitoredItem> fSubMon)
         {
             m_subscription.RemoveItems(m_subscription.MonitoredItems);
-            m_subscription.ApplyChanges();
-            foreach (var ii in fSubMon)
+
+            foreach(MonitoredItem ii in fSubMon)
             {
-                ii.Notification += m_MonitoredItem_Notification;
-                DataValue initValue = new DataValue();
-                addMonitorValue(ii.ResolvedNodeId, ii, initValue);
-
-
+                CreateMonitoredItem(ii.ResolvedNodeId, ii.DisplayName, false);
             }
-            m_subscription.AddItems(fSubMon);
+            UpdateDict();
             m_subscription.ApplyChanges();
+            SaveFile();
+
         }
-        public void CreateMonitoredItem(NodeId nodeId, string displayName, MonitoredItem monitoredItem)
+        public void CreateMonitoredItem(NodeId nodeId, string displayName, bool saveFile)
         {
 
             // add the new monitored item.
 
-            lastMonitoredItem = new MonitoredItem(m_subscription.DefaultItem);
+            monitoredItem = new MonitoredItem(m_subscription.DefaultItem);
             monitoredItem.StartNodeId = nodeId;
             monitoredItem.AttributeId = Attributes.Value;
             monitoredItem.DisplayName = displayName;
@@ -274,14 +271,28 @@ namespace NewTestApp
             monitoredItem.SamplingInterval = 100;
             monitoredItem.QueueSize = 0;
             monitoredItem.DiscardOldest = false;
-
             monitoredItem.Notification += m_MonitoredItem_Notification;
-            lastMonitoredItem = monitoredItem;
+
             m_subscription.AddItem(monitoredItem);
-            m_subscription.ApplyChanges();
-            SaveFile();
 
+            if (saveFile)
+            {
 
+                subDict[nodeId] = new MonitorValue(monitoredItem, new DataValue(0));
+                m_subscription.ApplyChanges();
+                SaveFile();
+
+            }
+
+        }
+
+        public void UpdateDict()
+        {
+            subDict.Clear();
+            foreach (MonitoredItem ii in m_subscription.MonitoredItems)
+            {
+                subDict[ii.ResolvedNodeId] = new MonitorValue(ii, new DataValue(0));
+            }
         }
         public void SaveFile()
         {
@@ -293,7 +304,10 @@ namespace NewTestApp
 
 
         }
-        public void RemoveMonitoredItem(NodeId rNodeId)
+
+
+
+        public void RemoveMonitoredItem(NodeId rNodeId, bool saveFile)
         {
 
             foreach (MonitoredItem monitorItem in m_subscription.MonitoredItems)
@@ -309,7 +323,11 @@ namespace NewTestApp
                     break;
                 }
             }
-            SaveFile();
+            if (saveFile)
+            {
+                SaveFile();
+            }
+            
         }
         public void MonitoredItem_Notification(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
         {

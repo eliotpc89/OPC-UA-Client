@@ -68,6 +68,7 @@ namespace NewTestApp
                                          as ConnectViewController;
                 nextVc.cvcFileName = fileName;
                 nextVc.fileIsNew = fileIsNew;
+                Console.WriteLine("Performing Segue to CVC: {0}", fileName);
 
             }
         }
@@ -94,10 +95,9 @@ namespace NewTestApp
                 Console.WriteLine("User: {0}", alert.TextFields[0].Text);
                 ctrlr.fileName = alert.TextFields[0].Text +".json";
                 ctrlr.fileIsNew = true;
-                controller.DismissViewController(true, null);
-                controller.PerformSegue("PageVcSegue",null);
-                
+
                 Console.WriteLine(ctrlr.fileName);
+                controller.PerformSegue("PageVcSegue", this);
             }));
 
             alert.AddTextField((field) => {
@@ -110,7 +110,7 @@ namespace NewTestApp
         {
             ShowAlert(controller);
             
- 
+
         }
 
         public override void DidPickDocumentsAtUrls(UIDocumentBrowserViewController controller, NSUrl[] documentUrls)
@@ -139,6 +139,8 @@ namespace NewTestApp
 
             controller.PerformSegue("PageVcSegue", null);
         }
-        
+
+
+
     }
 }

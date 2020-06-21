@@ -18,15 +18,28 @@ namespace NewTestApp
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField ConnectAddress { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UILabel TitleFileName { get; set; }
+
         [Action ("OpcUaConnectUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
         partial void OpcUaConnectUp (UIKit.UIButton sender);
+
+        [Action ("ReturnToFileBrowserButton:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void ReturnToFileBrowserButton (UIKit.UIButton sender);
 
         void ReleaseDesignerOutlets ()
         {
             if (ConnectAddress != null) {
                 ConnectAddress.Dispose ();
                 ConnectAddress = null;
+            }
+
+            if (TitleFileName != null) {
+                TitleFileName.Dispose ();
+                TitleFileName = null;
             }
         }
     }
