@@ -12,25 +12,41 @@ namespace NewTestApp
         public DataValue valData { get; set; }
         public MonitoredItem monitoredItem { get; set; }
         private bool editLock { get; set; }
-
-        ReferenceDescription litem { get; set; }
-        NodeId localNodeid { get; set; }
+        public string dispName { get; set; }
+        public string typName { get; set; }
+        public NodeId localNodeid { get; set; }
         public OpcConnection OpcUa { get; set; }
         public DetailViewController(IntPtr handle) : base(handle)
         {
         }
         
-        public void SetDetailItem(object newDetailItem)
+        public void SetDetailItem(ReferenceDescription newDetailItem)
         {
             if (DetailItem != newDetailItem)
             {
                 DetailItem = newDetailItem;
-
+                localNodeid = ExpandedNodeId.ToNodeId( newDetailItem.NodeId, OpcUa.m_session.NamespaceUris);
+                string dispNamePfx = OpcUa.NodeTreeDict[localNodeid].Parent.Data.DisplayName.ToString();
+                typName = newDetailItem.TypeDefinition.ToString();
+                dispName = dispNamePfx + "." + newDetailItem.DisplayName.ToString();
+                DetailTitleBar.Title = dispName;
                 // Update the view
                 ConfigureView();
             }
         }
-        
+        public void SetDetailItem(NodeId newDetailItem, string nodeName)
+        {
+            if (DetailItem != newDetailItem)
+            {
+                DetailItem = newDetailItem;
+                typName = OpcUa.subDict[newDetailItem].value.WrappedValue.TypeInfo.ToString();
+                DetailTitleBar.Title = nodeName;
+                dispName = nodeName;
+                localNodeid = newDetailItem;
+                // Update the view
+                ConfigureView();
+            }
+        }
         void ConfigureView()
         {
             
@@ -38,10 +54,9 @@ namespace NewTestApp
             if (IsViewLoaded && DetailItem != null)
             {
 
-
-                
                 detailDescriptionLabel.Text = DetailItem.ToString();
-                
+                DetailTitleBar.Title = dispName;
+                TypeLabelVar.Text = typName;
             }
         }
 
@@ -50,10 +65,9 @@ namespace NewTestApp
             
             base.ViewDidLoad();
 
-            litem = DetailItem as ReferenceDescription;
-            localNodeid = ExpandedNodeId.ToNodeId(litem.NodeId, OpcUa.m_session.NamespaceUris);
-            valData = OpcUa.m_session.ReadValue(localNodeid);
-            DetailTitleBar.Title = litem.DisplayName.ToString();
+            //valData = OpcUa.m_session.ReadValue(localNodeid);
+            //Node valNode = OpcUa.m_session.ReadNode(localNodeid);
+            //ReferenceDescription valRef = OpcUa.m_session.FindDataDescription(localNodeid);
 
             DataChangeBox.Text = "";
             bool subscribed = false;
@@ -70,20 +84,13 @@ namespace NewTestApp
             }
             if (!subscribed)
             {
-                    
+                valData = new DataValue(new Variant((int)0));
                 monitoredItem = new MonitoredItem(OpcUa.m_subscription.DefaultItem);
-
+                OpcUa.CreateMonitoredItem(localNodeid, dispName, monitoredItem);
+                OpcUa.subDict[localNodeid] = new MonitorValue(monitoredItem, valData);
+                SubscribeSwitch.SetState(subscribed, false);
                 
             }
-            string dispNamePfx = OpcUa.NodeTreeDict[localNodeid].Parent.Data.DisplayName.ToString();
-            var dispName = dispNamePfx + "." + litem.DisplayName.ToString();
-            OpcUa.CreateMonitoredItem(localNodeid, dispName, monitoredItem);
-            OpcUa.subDict[localNodeid] = new MonitorValue(monitoredItem, valData);
-            SubscribeSwitch.SetState(subscribed, false);
-            TypeLabelVar.Text = valData.WrappedValue.TypeInfo.ToString();
-            var ipath = DetailViewTable.IndexPathsForVisibleRows;
-
-
             DataChangeBox.KeyboardType = UIKeyboardType.NumbersAndPunctuation;
             // Perform any additional setup after loading the view, typically from a nib.
             PollDataAsync();
@@ -119,6 +126,8 @@ namespace NewTestApp
                         if (OpcUa.subDict.ContainsKey(localNodeid))
                         {
                             detailDescriptionLabel.Text = OpcUa.subDict[localNodeid].value.WrappedValue.ToString();//lmonlist[0].Value.ToString();
+                            valData = OpcUa.subDict[localNodeid].value;
+                            TypeLabelVar.Text = OpcUa.subDict[localNodeid].value.WrappedValue.TypeInfo.ToString();
 
                         }
 

@@ -18,6 +18,7 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
+
             
         }
 
@@ -28,9 +29,9 @@ namespace NewTestApp
 
             TableView.Source = dataSource = new DataSource(this);
             
-            foreach (var ii in OpcUa.subDict)
+            foreach (var ii in OpcUa.subDict.Values)
             {
-                var iinode = ii.Value;
+                var iinode = ii;
                 dataSource.Objects.Add(iinode);
 
                 using (var indexPath = NSIndexPath.FromRowSection(0, 0))
@@ -50,12 +51,14 @@ namespace NewTestApp
             {
                 var indexPath = TableView.IndexPathForSelectedRow;
                 var indexMonValue = dataSource.Objects[indexPath.Row] as MonitorValue;
-                NodeId indexNode = indexMonValue.monItem.ResolvedNodeId;
-                var item = OpcUa.subDict[indexNode];
+                NodeId indexNodeId = indexMonValue.monItem.ResolvedNodeId;
+                var item = OpcUa.subDict[indexNodeId];
 
                 var controller = (DetailViewController)((UINavigationController)segue.DestinationViewController).TopViewController;
                 controller.OpcUa = OpcUa;
-                controller.SetDetailItem(item);
+                
+                controller.SetDetailItem(indexNodeId, item.monItem.DisplayName);
+
                 //controller.NavigationItem.LeftBarButtonItem = SplitViewController.DisplayModeButtonItem;
                 //controller.NavigationItem.LeftItemsSupplementBackButton = true;
 

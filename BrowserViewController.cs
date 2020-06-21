@@ -25,7 +25,7 @@ namespace NewTestApp
                 UTType.XML
                     
             };
-
+        public bool fileIsNew;
         public string fileName;
         public string fileData;
         public BrowserViewController(IntPtr handle) : base(handle)
@@ -67,19 +67,8 @@ namespace NewTestApp
                 var nextVc = segue.DestinationViewController
                                          as ConnectViewController;
                 nextVc.cvcFileName = fileName;
-                NSData data = new NSData();
-                data = NSData.FromFile(fileName);
-                if (data != null)
-                {
-                    Console.WriteLine("CVC{0}", fileName);
-                    nextVc.SetConnectAddress(fileName);
-                }
-                if (!(nextVc.OpcUa is null))
-                {
-                    nextVc.OpcUa.m_session.CloseSession(null, true);
-                    
-                }
-                nextVc.OpcUa = new OpcConnection(fileName);
+                nextVc.fileIsNew = fileIsNew;
+
             }
         }
 
@@ -104,6 +93,7 @@ namespace NewTestApp
                 // This code is invoked when the user taps on login, and this shows how to access the field values
                 Console.WriteLine("User: {0}", alert.TextFields[0].Text);
                 ctrlr.fileName = alert.TextFields[0].Text +".json";
+                ctrlr.fileIsNew = true;
                 controller.DismissViewController(true, null);
                 controller.PerformSegue("PageVcSegue",null);
                 
@@ -119,7 +109,7 @@ namespace NewTestApp
         public override void DidRequestDocumentCreation(UIDocumentBrowserViewController controller, Action<NSUrl, UIDocumentBrowserImportMode> importHandler)
         {
             ShowAlert(controller);
-
+            
  
         }
 
@@ -135,19 +125,9 @@ namespace NewTestApp
             NSData data = NSData.FromUrl(documentUrls[0]);
             ctrlr.fileData = data.ToString();
             ctrlr.fileName = filename;
-            if (data != null)
-            {
-                byte[] dataBytes = new byte[data.Length];
+            ctrlr.fileIsNew = false;
 
-                System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
-
-                for (int i = 0; i < dataBytes.Length; i++)
-                {
-                    Console.WriteLine(dataBytes[i]);
-                }
-            }
-
-            Console.WriteLine(data + "Completed");
+            Console.WriteLine(filename);
 
             var alertController = UIAlertController.Create("import", msg, UIAlertControllerStyle.Alert);
             var okButton = UIAlertAction.Create("OK", UIAlertActionStyle.Default, (obj) =>
@@ -156,6 +136,7 @@ namespace NewTestApp
             });
             alertController.AddAction(okButton);
             controller.DismissModalViewController(true);
+
             controller.PerformSegue("PageVcSegue", null);
         }
         

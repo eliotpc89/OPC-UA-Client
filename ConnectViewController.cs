@@ -12,10 +12,10 @@ namespace NewTestApp
     {
         public string cvcFileName;
         public OpcConnection OpcUa;
-        
-        public ConnectViewController (IntPtr handle) : base (handle)
+        public bool fileIsNew;
+        public ConnectViewController(IntPtr handle) : base(handle)
         {
-            
+
         }
         public void SetConnectAddress(string nAddress)
         {
@@ -35,10 +35,28 @@ namespace NewTestApp
         {
             base.ViewDidLoad();
 
-            
-            
+
+
 
         }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            if (!fileIsNew)
+            {
+
+                OpcUa = new OpcConnection(cvcFileName);
+
+            }
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            
+        }
+
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
             base.PrepareForSegue(segue, sender);
@@ -51,15 +69,8 @@ namespace NewTestApp
                 if (OpcUa != null)
                 {
 
-                    OpcUa.m_session.CloseSession(null, true);
-                    OpcUa.m_session.Dispose();
-                    OpcUa.m_subscription.Dispose();
-                    OpcUa.NodeTreeDict.Clear();
-                    OpcUa.subDict.Clear();
-                    
-
-                    OpcUa.subDict.Clear();
-                    
+                    OpcUa.ResetOpc();
+                    OpcUa = null;
 
                 }
             }
@@ -69,12 +80,15 @@ namespace NewTestApp
             {
                 var nextVc = segue.DestinationViewController
                                          as MainSplitViewController;
-                
-                if (nextVc != null)
+
+
+                nextVc.OpcUa = OpcUa;
+
+                foreach (var ii in OpcUa.subDict)
                 {
-                    
-                    nextVc.OpcUa = OpcUa;
+                    Console.WriteLine(ii.Value);
                 }
+
             }
 
             if (segue.Identifier == "showSubs")
@@ -84,29 +98,25 @@ namespace NewTestApp
 
                 nextVc.OpcUa = OpcUa;
                 Console.WriteLine("ShowSubs");
-                OpcUa.subDict.Clear();
-                foreach(var ii in nextVc.OpcUa.m_subscription.MonitoredItems)
-                {
-                    var dv = new DataValue();
-                    OpcUa.subDict[ii.ResolvedNodeId] = new MonitorValue(ii, dv);
-                }
+
 
             }
 
-            
+
         }
 
         partial void OpcUaConnectUp(UIButton sender)
         {
-            if (OpcUa == null)
+            if (fileIsNew)
             {
                 OpcUa = new OpcConnection();
+                OpcUa.fileName = cvcFileName;
             }
-            
-            OpcUa.Connect(ConnectAddress.Text.ToString());
-        
 
-        
+            OpcUa.Connect(ConnectAddress.Text.ToString());
+
+
+
         }
         private string[] allowedUTIs =  {
                     UTType.UTF8PlainText,
@@ -118,7 +128,7 @@ namespace NewTestApp
                     UTType.Image,
                     UTType.JSON,
                     UTType.XML
-                    
+
                 };
         private string[] allowedUrls =
         {

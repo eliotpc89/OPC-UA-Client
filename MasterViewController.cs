@@ -96,13 +96,16 @@ namespace NewTestApp
            
             if (segue.Identifier == "showDetail")
             {
+                MainSplitViewController rootvc = (MainSplitViewController)SplitViewController;
                 var indexPath = TableView.IndexPathForSelectedRow;
                 var indexTreeNode = dataSource.Objects[indexPath.Row] as TreeNode<ReferenceDescription>;
                 var item = indexTreeNode.Data;
-                MainSplitViewController rootvc = (MainSplitViewController)SplitViewController;
+
+
 
                 var controller = (DetailViewController)((UINavigationController)segue.DestinationViewController).TopViewController;
                 controller.OpcUa = rootvc.OpcUa;
+                
                 controller.SetDetailItem(item) ;
                 controller.NavigationItem.LeftBarButtonItem = SplitViewController.DisplayModeButtonItem;
                 controller.NavigationItem.LeftItemsSupplementBackButton = true;

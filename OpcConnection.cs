@@ -21,8 +21,7 @@ namespace NewTestApp
 
             monItem = iMonItem;
             value = iValue;
-            
-            
+
         }
     }
     public class SavedObject
@@ -33,7 +32,7 @@ namespace NewTestApp
         public SavedObject(OpcConnection opcCon)
         {
             fileSavedAddress = opcCon.savedAddress;
-            fileSubMon  = opcCon.m_subscription.MonitoredItems;
+            fileSubMon = opcCon.m_subscription.MonitoredItems;
         }
     }
     public class OpcConnection
@@ -46,17 +45,18 @@ namespace NewTestApp
         public TreeNode<ReferenceDescription> NodeTreeRoot { get; set; }
         public TreeNode<ReferenceDescription> NodeTreeLoc { get; set; }
         public Dictionary<NodeId, TreeNode<ReferenceDescription>> NodeTreeDict { get; set; }
-
+        public ApplicationInstance m_application { get; set; }
         public string savedAddress { get; set; }
         public List<MonitoredItem> SubList { get; set; }
         public Subscription m_subscription { get; set; }
         public string m_sub_val { get; set; }
         public string filePath { get; set; }
+        public string appDataPath { get; set; }
         public string fileName { get; set; }
         public string fileContents { get; set; }
         public MonitoredItem lastMonitoredItem { get; set; }
-        public Dictionary<NodeId, MonitorValue> subDict {get; set;}
-        private MonitoredItemNotificationEventHandler m_MonitoredItem_Notification;
+        public Dictionary<NodeId, MonitorValue> subDict { get; set; }
+        public MonitoredItemNotificationEventHandler m_MonitoredItem_Notification;
         const int ReconnectPeriod = 3;
 
         public void addMonitorValue(NodeId iNodeId, MonitoredItem iMonItem, DataValue iValue)
@@ -70,15 +70,16 @@ namespace NewTestApp
         }
         public OpcConnection(string fname)
         {
-            filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             fileName = fname;
+            filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var savedObject = new SavedObject();
-            string fileArr = filePath+"/"+fileName;
+            string fileArr = filePath + "/" + fileName;
             NSData data = new NSData();
             data = NSData.FromFile(fileArr);
-
+            //Console.WriteLine(data);
             if (data != null)
             {
+                
                 if (subDict != null)
                 {
                     subDict.Clear();
@@ -87,14 +88,25 @@ namespace NewTestApp
                 savedObject = JsonConvert.DeserializeObject<SavedObject>(data.ToString());
                 Connect(savedObject.fileSavedAddress);
                 CreateMonitoredItems(savedObject.fileSubMon);
-                
+
             }
-            
-            
-            
+
+
 
         }
-
+        public void ResetOpc()
+        {
+            List<NodeId> nodeList = new List<NodeId>();
+            foreach(var ii in subDict)
+            {
+                nodeList.Add(ii.Key);
+            }
+            foreach(var ii in nodeList)
+            {
+                RemoveMonitoredItem(ii);
+            }
+            m_session.CloseSession(null, true);
+        }
         public void Connect(string OpcAddress)
 
         {
@@ -108,24 +120,25 @@ namespace NewTestApp
                 ApplicationType = ApplicationType.Client,
                 SecurityConfiguration = new SecurityConfiguration
                 {
-                    ApplicationCertificate = new CertificateIdentifier { StoreType = @"Directory", StorePath = @"%CommonApplicationData%\OPC Foundation\CertificateStores\MachineDefault", SubjectName = "MyHomework" },
-                    TrustedIssuerCertificates = new CertificateTrustList { StoreType = @"Directory", StorePath = @"%CommonApplicationData%\OPC Foundation\CertificateStores\UA Certificate Authorities" },
-                    TrustedPeerCertificates = new CertificateTrustList { StoreType = @"Directory", StorePath = @"%CommonApplicationData%\OPC Foundation\CertificateStores\UA Applications" },
-                    RejectedCertificateStore = new CertificateTrustList { StoreType = @"Directory", StorePath = @"%CommonApplicationData%\OPC Foundation\CertificateStores\RejectedCertificates" },
-                    AutoAcceptUntrustedCertificates = true
+                    ApplicationCertificate = new CertificateIdentifier { StoreType = @"Directory", StorePath = appDataPath + @"\OPC Foundation\CertificateStores\MachineDefault", SubjectName = "MyHomework" },
+
+                    AutoAcceptUntrustedCertificates = true,
+
+
                 },
                 TransportConfigurations = new TransportConfigurationCollection(),
                 TransportQuotas = new TransportQuotas { OperationTimeout = 5000 },
                 ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 3000 },
                 TraceConfiguration = new TraceConfiguration()
             };
+
             config.Validate(ApplicationType.Client).GetAwaiter().GetResult();
             if (config.SecurityConfiguration.AutoAcceptUntrustedCertificates)
             {
                 config.CertificateValidator.CertificateValidation += (s, e) => { e.Accept = (e.Error.StatusCode == StatusCodes.BadCertificateUntrusted); };
             }
 
-            var application = new ApplicationInstance
+            m_application = new ApplicationInstance
             {
                 ApplicationName = "MyHomework",
                 ApplicationType = ApplicationType.Client,
@@ -134,19 +147,20 @@ namespace NewTestApp
             //application.CheckApplicationInstanceCertificate(false, 2048).GetAwaiter().GetResult();
 
             var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 3000);
+
             m_MonitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
             Console.WriteLine($"Step 2 - Create a session with your server: {selectedEndpoint.EndpointUrl} ");
-            m_session =  Session.Create(config, new ConfiguredEndpoint(null, selectedEndpoint, EndpointConfiguration.Create(config)), false, "", 60000, null, null).GetAwaiter().GetResult();
+            m_session = Session.Create(config, new ConfiguredEndpoint(null, selectedEndpoint, EndpointConfiguration.Create(config)), false, "", 60000, null, null).GetAwaiter().GetResult();
             m_session.KeepAlive += Client_KeepAlive;
             m_subscription = new Subscription(m_session.DefaultSubscription) { PublishingInterval = 100 };
             m_session.AddSubscription(m_subscription);
             m_subscription.Create();
             Console.WriteLine("Step 3 - Browse the server namespace.");
- 
+
             ReferenceDescription rootRef = new ReferenceDescription();
             rootRef.DisplayName = "Root >";
             NodeTreeRoot = new TreeNode<ReferenceDescription>(rootRef);
-            
+
             NodeTreeLoc = new TreeNode<ReferenceDescription>(null);
             NodeTreeLoc = NodeTreeRoot;
             NodeId rootNodeId = ObjectIds.ObjectsFolder;
@@ -157,7 +171,7 @@ namespace NewTestApp
             subDict = new Dictionary<NodeId, MonitorValue>();
             BrowseNextTree(NodeTreeRoot);
 
-            
+
 
         }
 
@@ -202,7 +216,7 @@ namespace NewTestApp
             if (nextRefs.Count > 0)
             {
 
-                if (NodeTreeDict[lNodeId].Children.Count==0)
+                if (NodeTreeDict[lNodeId].Children.Count == 0)
                 {
                     foreach (var nextRd in nextRefs)
                     {
@@ -210,7 +224,7 @@ namespace NewTestApp
                         NodeTreeDict[iNodeId] = NodeTreeLoc.AddChild(nextRd);
                         Console.WriteLine("Next: {0}", NodeTreeDict[iNodeId].Data.DisplayName);
                     }
-                    
+
 
                 }
 
@@ -230,25 +244,28 @@ namespace NewTestApp
             return NodeTreeLoc.Parent.Data.DisplayName.ToString();
         }
 
+
+
         public void CreateMonitoredItems(IEnumerable<MonitoredItem> fSubMon)
         {
             m_subscription.RemoveItems(m_subscription.MonitoredItems);
+            m_subscription.ApplyChanges();
             foreach (var ii in fSubMon)
             {
                 ii.Notification += m_MonitoredItem_Notification;
                 DataValue initValue = new DataValue();
                 addMonitorValue(ii.ResolvedNodeId, ii, initValue);
 
-                
+
             }
             m_subscription.AddItems(fSubMon);
             m_subscription.ApplyChanges();
         }
-            public void CreateMonitoredItem(NodeId nodeId, string displayName, MonitoredItem monitoredItem)
+        public void CreateMonitoredItem(NodeId nodeId, string displayName, MonitoredItem monitoredItem)
         {
 
             // add the new monitored item.
-            
+
             lastMonitoredItem = new MonitoredItem(m_subscription.DefaultItem);
             monitoredItem.StartNodeId = nodeId;
             monitoredItem.AttributeId = Attributes.Value;
@@ -257,26 +274,28 @@ namespace NewTestApp
             monitoredItem.SamplingInterval = 100;
             monitoredItem.QueueSize = 0;
             monitoredItem.DiscardOldest = false;
-          
+
             monitoredItem.Notification += m_MonitoredItem_Notification;
             lastMonitoredItem = monitoredItem;
             m_subscription.AddItem(monitoredItem);
             m_subscription.ApplyChanges();
             SaveFile();
-;
+
 
         }
         public void SaveFile()
         {
-            var json = new SavedObject(this);
 
+            var json = new SavedObject(this);
             var fname = Path.Combine(filePath, fileName);
+
             File.WriteAllText(fname, JsonConvert.SerializeObject(json));
+
 
         }
         public void RemoveMonitoredItem(NodeId rNodeId)
         {
-            
+
             foreach (MonitoredItem monitorItem in m_subscription.MonitoredItems)
             {
                 if (monitorItem.ResolvedNodeId == rNodeId)
@@ -299,22 +318,22 @@ namespace NewTestApp
 
             MonitoredItemNotification notification = e.NotificationValue as MonitoredItemNotification;
 
-            subDict[monitoredItem.ResolvedNodeId] = new MonitorValue( monitoredItem, notification.Value);
+            subDict[monitoredItem.ResolvedNodeId] = new MonitorValue(monitoredItem, notification.Value);
             foreach (var value in monitoredItem.DequeueValues())
             {
-                //Console.WriteLine("{0}: {1}, {2}, {3}", monitoredItem.DisplayName, value.Value, value.SourceTimestamp, value.StatusCode);
-                //subDict[monitoredItem.ResolvedNodeId].value=value;
-                Console.WriteLine("LastValue: {0}", monitoredItem.;
+                Console.WriteLine("{0}: {1}, {2}, {3}", monitoredItem.DisplayName, value.Value, value.SourceTimestamp, value.StatusCode);
+                subDict[monitoredItem.ResolvedNodeId].value = value;
+
             }
             m_sub_val = notification.Value.ToString();
-            
+
             //Console.WriteLine("MonitoringNotification");
         }
 
-        public static object ChangeType( string valueText, BuiltInType bitype)
+        public static object ChangeType(string valueText, BuiltInType bitype)
         {
             object value;
-            
+
             switch (bitype)
             {
                 case BuiltInType.Boolean:
