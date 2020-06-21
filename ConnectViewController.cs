@@ -13,6 +13,7 @@ namespace NewTestApp
         public string cvcFileName;
         public OpcConnection OpcUa;
         public bool fileIsNew;
+        public bool fileIsLoaded;
         public ConnectViewController(IntPtr handle) : base(handle)
         {
 
@@ -35,7 +36,7 @@ namespace NewTestApp
         {
             base.ViewDidLoad();
 
-
+            fileIsLoaded = false;
 
 
         }
@@ -45,10 +46,11 @@ namespace NewTestApp
             base.ViewWillAppear(animated);
             TitleFileName.Text = cvcFileName;
             NavigationController.Title = cvcFileName;
-            if (!fileIsNew)
+            if (!fileIsNew && !fileIsLoaded)
             {
 
                 OpcUa = new OpcConnection(cvcFileName);
+                fileIsLoaded = true;
 
             }
         }
@@ -133,6 +135,7 @@ namespace NewTestApp
 
         partial void ReturnToFileBrowserButton(UIButton sender)
         {
+            OpcUa.ResetOpc();
             NavigationController.PopToRootViewController(true);
         }
     }

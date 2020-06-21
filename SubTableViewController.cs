@@ -28,12 +28,12 @@ namespace NewTestApp
 
 
             TableView.Source = dataSource = new DataSource(this);
-            List<MonitorValue> nodeList = new List<MonitorValue>(OpcUa.subDict.Values);
+            List<NodeId> nodeList = new List<NodeId>(OpcUa.subDict.Keys);
 
-            foreach (MonitorValue ii in nodeList)
+            foreach (NodeId ii in nodeList)
             {
                 var iinode = ii;
-                dataSource.Objects.Add(iinode);
+                dataSource.Objects.Add(OpcUa.subDict[ii]);
 
                 using (var indexPath = NSIndexPath.FromRowSection(0, 0))
                 {
