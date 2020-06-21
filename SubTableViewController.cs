@@ -12,14 +12,14 @@ namespace NewTestApp
     {
         public OpcConnection OpcUa;
         DataSource dataSource;
-        public SubTableViewController (IntPtr handle) : base (handle)
+        public SubTableViewController(IntPtr handle) : base(handle)
         {
         }
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
 
-            
+
         }
 
         public override void ViewDidLoad()
@@ -55,10 +55,11 @@ namespace NewTestApp
                 NodeId indexNodeId = indexMonValue.monItem.ResolvedNodeId;
                 var item = OpcUa.subDict[indexNodeId];
 
-                var controller = (DetailViewController)((UINavigationController)segue.DestinationViewController).TopViewController;
-                controller.OpcUa = OpcUa;
-                
-                controller.SetDetailItem(indexNodeId, item.monItem.DisplayName);
+                var nextVc = segue.DestinationViewController
+                         as DetailViewController;
+
+                nextVc.OpcUa = OpcUa;
+                nextVc.SetDetailItem(indexNodeId, item.monItem.DisplayName);
 
                 //controller.NavigationItem.LeftBarButtonItem = SplitViewController.DisplayModeButtonItem;
                 //controller.NavigationItem.LeftItemsSupplementBackButton = true;
@@ -66,7 +67,7 @@ namespace NewTestApp
 
             }
         }
-      
+
 
         class DataSource : UITableViewSource
         {
@@ -77,7 +78,7 @@ namespace NewTestApp
             public DataSource(SubTableViewController controller)
             {
                 this.controller = controller;
-                
+
             }
 
             public IList<object> Objects
@@ -110,7 +111,7 @@ namespace NewTestApp
                             var cellValue = "";
                             if (controller.OpcUa.subDict.ContainsKey(node.monItem.ResolvedNodeId))
                             {
-                                cellValue= controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
+                                cellValue = controller.OpcUa.subDict[node.monItem.ResolvedNodeId].value.WrappedValue.ToString();
 
                             }
                             if (cell != null)
@@ -131,18 +132,18 @@ namespace NewTestApp
             // Customize the appearance of table view cells.
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
-                NSString cellId = (NSString) "CellDetail" ;
+                NSString cellId = (NSString)"CellDetail";
                 var cell = tableView.DequeueReusableCell(cellId) as SubCellDetail;
                 var node = objects[indexPath.Row] as MonitorValue;
-                
 
 
 
-                cell= new SubCellDetail(cellId);
+
+                cell = new SubCellDetail(cellId);
 
                 PollDataAsync(cell, node, tableView);
 
-                
+
 
                 return cell;
             }
@@ -170,7 +171,7 @@ namespace NewTestApp
                     // Delete the row from the data source.
                     var node = objects[indexPath.Row] as MonitorValue;
                     objects.RemoveAt(indexPath.Row);
-                    
+
                     controller.OpcUa.RemoveMonitoredItem(node.monItem.ResolvedNodeId, true);
 
                     controller.TableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Fade);

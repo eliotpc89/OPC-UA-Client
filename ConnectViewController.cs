@@ -44,6 +44,7 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             TitleFileName.Text = cvcFileName;
+            NavigationController.Title = cvcFileName;
             if (!fileIsNew)
             {
 
@@ -62,25 +63,12 @@ namespace NewTestApp
         {
             base.PrepareForSegue(segue, sender);
 
-            if (segue.Identifier == "RetToBrowser")
+
+
+            if (segue.Identifier == "showNodes")
             {
                 var nextVc = segue.DestinationViewController
-                                         as MainSplitViewController;
-
-                if (OpcUa != null)
-                {
-                    
-                    OpcUa.ResetOpc();
-                    //OpcUa = null;
-
-                }
-            }
-
-
-            if (segue.Identifier == "browseNodes")
-            {
-                var nextVc = segue.DestinationViewController
-                                         as MainSplitViewController;
+                                         as NodeViewController;
 
 
                 nextVc.OpcUa = OpcUa;

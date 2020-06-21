@@ -78,10 +78,6 @@
     <Compile Include="ConnectViewController.designer.cs">
       <DependentUpon>ConnectViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainSplitViewController.cs" />
-    <Compile Include="MainSplitViewController.designer.cs">
-      <DependentUpon>MainSplitViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="OpcConnection.cs" />
     <Compile Include="DetailViewTableController.cs" />
     <Compile Include="DetailViewTableController.designer.cs">
@@ -116,15 +112,15 @@
     <Compile Include="PageVC.designer.cs">
       <DependentUpon>PageVC.cs</DependentUpon>
     </Compile>
+    <Compile Include="NodeViewController.cs" />
+    <Compile Include="NodeViewController.designer.cs">
+      <DependentUpon>NodeViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetailViewController.cs" />
     <Compile Include="DetailViewController.designer.cs">
       <DependentUpon>DetailViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MasterViewController.cs" />
-    <Compile Include="MasterViewController.designer.cs">
-      <DependentUpon>MasterViewController.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
