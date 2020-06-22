@@ -42,7 +42,11 @@ namespace NewTestApp
             
 
         }
-
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationController.NavigationBarHidden = true;
+        }
 
         public override void ViewDidAppear(bool animated)
         {
@@ -97,19 +101,29 @@ namespace NewTestApp
                 ctrlr.fileIsNew = true;
 
                 Console.WriteLine(ctrlr.fileName);
-                controller.PerformSegue("PageVcSegue", this);
+                
+
+                alert.DismissViewController(true, () =>
+                {
+                    controller.PerformSegue("PageVcSegue", null);
+                });
+                
             }));
 
             alert.AddTextField((field) => {
                 //field.Text = true;
             });
             
-            controller.PresentViewController(alert, animated: true, null);
+            controller.PresentViewController(alert, animated: false, null);
+            
+
         }
         public override void DidRequestDocumentCreation(UIDocumentBrowserViewController controller, Action<NSUrl, UIDocumentBrowserImportMode> importHandler)
         {
+
+            importHandler(null, UIDocumentBrowserImportMode.Copy);
             ShowAlert(controller);
-            
+
 
         }
 
@@ -128,14 +142,6 @@ namespace NewTestApp
             ctrlr.fileIsNew = false;
 
             Console.WriteLine(filename);
-
-            var alertController = UIAlertController.Create("import", msg, UIAlertControllerStyle.Alert);
-            var okButton = UIAlertAction.Create("OK", UIAlertActionStyle.Default, (obj) =>
-            {
-                alertController.DismissViewController(true, null);
-            });
-            alertController.AddAction(okButton);
-            controller.DismissModalViewController(true);
 
             controller.PerformSegue("PageVcSegue", null);
         }

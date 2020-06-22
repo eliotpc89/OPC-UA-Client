@@ -45,7 +45,9 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             TitleFileName.Text = cvcFileName;
+            NavigationItem.Title = cvcFileName;
             NavigationController.Title = cvcFileName;
+            NavigationController.NavigationBarHidden = true;
             if (!fileIsNew && !fileIsLoaded)
             {
 
@@ -135,7 +137,11 @@ namespace NewTestApp
 
         partial void ReturnToFileBrowserButton(UIButton sender)
         {
-            OpcUa.ResetOpc();
+            if(!(OpcUa is null))
+            {
+                OpcUa.ResetOpc();
+            }
+
             NavigationController.PopToRootViewController(true);
         }
     }

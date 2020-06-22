@@ -95,7 +95,11 @@ namespace NewTestApp
             PollDataAsync();
             ConfigureView();
         }
-
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationController.NavigationBarHidden = false;
+        }
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);

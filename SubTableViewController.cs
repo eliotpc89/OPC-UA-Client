@@ -15,6 +15,12 @@ namespace NewTestApp
         public SubTableViewController(IntPtr handle) : base(handle)
         {
         }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationController.NavigationBarHidden = false;
+        }
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);

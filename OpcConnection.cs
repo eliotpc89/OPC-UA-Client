@@ -94,15 +94,18 @@ namespace NewTestApp
         public void ResetOpc()
         {
             connected = false;
-            List<NodeId> nodeList = new List<NodeId>(subDict.Keys);
-
-            foreach(NodeId ii in nodeList)
+            if (subDict != null)
             {
-                RemoveMonitoredItem(ii, false);
-                Console.WriteLine("removing item");
-            }
+                List<NodeId> nodeList = new List<NodeId>(subDict.Keys);
 
-            m_session.CloseSession(null, true);
+                foreach (NodeId ii in nodeList)
+                {
+                    RemoveMonitoredItem(ii, false);
+                    Console.WriteLine("removing item");
+                }
+
+                m_session.CloseSession(null, true);
+            }
             
         }
         public void Connect(string OpcAddress)
@@ -157,7 +160,7 @@ namespace NewTestApp
             Console.WriteLine("Step 3 - Browse the server namespace.");
 
             ReferenceDescription rootRef = new ReferenceDescription();
-            rootRef.DisplayName = "Root >";
+            rootRef.DisplayName = "Root";
             NodeTreeRoot = new TreeNode<ReferenceDescription>(rootRef);
 
             NodeTreeLoc = new TreeNode<ReferenceDescription>(null);
