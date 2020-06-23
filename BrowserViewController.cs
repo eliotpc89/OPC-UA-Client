@@ -13,7 +13,7 @@ namespace NewTestApp
 
     public partial class BrowserViewController : UIDocumentBrowserViewController
     {
-            private string[] allowedUTIs =  {
+        private string[] allowedUTIs =  {
                 UTType.UTF8PlainText,
                 UTType.PlainText,
                 UTType.RTF,
@@ -23,7 +23,7 @@ namespace NewTestApp
                 UTType.Image,
                 UTType.JSON,
                 UTType.XML
-                    
+
             };
         public bool fileIsNew;
         public string fileName;
@@ -32,14 +32,14 @@ namespace NewTestApp
         {
 
             var test = new UIDocumentBrowserViewControllerDelegate();
-            
+
 
 
         }
         public BrowserViewController(string[] allowedUTIs) : base(allowedUTIs)
         {
 
-            
+
 
         }
         public override void ViewWillAppear(bool animated)
@@ -51,15 +51,15 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-           
+
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            var test = new dbvcDelegate();
-            this.Delegate = test;
-            
+            dbvcDelegate dvbcdDel = new dbvcDelegate();
+            this.Delegate = dvbcdDel;
+
         }
 
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
@@ -77,9 +77,9 @@ namespace NewTestApp
             }
         }
 
-        public virtual void DidImportDocument (UIDocumentBrowserViewController controller, NSUrl sourceUrl, NSUrl destinationUrl)
+        public virtual void DidImportDocument(UIDocumentBrowserViewController controller, NSUrl sourceUrl, NSUrl destinationUrl)
         {
-            
+
 
 
         }
@@ -89,47 +89,63 @@ namespace NewTestApp
     }
     public class dbvcDelegate : UIDocumentBrowserViewControllerDelegate
     {
-        private void ShowAlert(UIViewController controller)
+        private void ShowAlert(UIViewController controller, string title, string prompt)
         {
 
-            UIAlertController alert = UIAlertController.Create("Create File", "Enter file name", UIAlertControllerStyle.Alert);
+            UIAlertController alert = UIAlertController.Create(title, prompt, UIAlertControllerStyle.Alert);
             var ctrlr = controller as BrowserViewController;
-            alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, action => {
+            alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, action =>
+            {
                 // This code is invoked when the user taps on login, and this shows how to access the field values
-                Console.WriteLine("User: {0}", alert.TextFields[0].Text);
-                ctrlr.fileName = alert.TextFields[0].Text +".json";
-                ctrlr.fileIsNew = true;
-
-                Console.WriteLine(ctrlr.fileName);
-                
-
-                alert.DismissViewController(true, () =>
+                if (alert.TextFields[0].Text.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                 {
-                    controller.PerformSegue("PageVcSegue", null);
-                });
-                
+                    alert.DismissViewController(true, () =>
+                    {
+
+                        this.ShowAlert(controller, "Invalid File Name", "Enter a valid file name");
+                    });
+                }
+                else
+                {
+                    Console.WriteLine("User: {0}", alert.TextFields[0].Text);
+                    ctrlr.fileName = alert.TextFields[0].Text + ".json";
+                    ctrlr.fileIsNew = true;
+                    Console.WriteLine(ctrlr.fileName);
+                    alert.DismissViewController(true, () =>
+                    {
+                        controller.PerformSegue("PageVcSegue", null);
+                    });
+                }
+
+
+            }));
+            alert.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, action =>
+            {
+                alert.DismissViewController(true, null);
+
             }));
 
-            alert.AddTextField((field) => {
+            alert.AddTextField((field) =>
+            {
                 //field.Text = true;
             });
-            
-            controller.PresentViewController(alert, animated: false, null);
-            
+
+            controller.PresentViewController(alert, animated: true, null);
+
 
         }
         public override void DidRequestDocumentCreation(UIDocumentBrowserViewController controller, Action<NSUrl, UIDocumentBrowserImportMode> importHandler)
         {
 
             importHandler(null, UIDocumentBrowserImportMode.Copy);
-            ShowAlert(controller);
+            ShowAlert(controller, "Create New File", "Enter a file name");
 
 
         }
 
         public override void DidPickDocumentsAtUrls(UIDocumentBrowserViewController controller, NSUrl[] documentUrls)
         {
-            
+
             Console.WriteLine("url = {0}", documentUrls[0].AbsoluteString);
             //bool success = await MoveFileToApp(didPickDocArgs.Url);  
             var success = true;
