@@ -37,6 +37,14 @@ namespace NewTestApp
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel TypeLabelVar { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UISwitch WriteBooleanSwitch { get; set; }
+
+        [Action ("WriteBooleanButton:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void WriteBooleanButton (UIKit.UIButton sender);
+
         [Action ("WriteDataButtonUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
         partial void WriteDataButtonUp (UIKit.UIButton sender);
@@ -71,6 +79,11 @@ namespace NewTestApp
             if (TypeLabelVar != null) {
                 TypeLabelVar.Dispose ();
                 TypeLabelVar = null;
+            }
+
+            if (WriteBooleanSwitch != null) {
+                WriteBooleanSwitch.Dispose ();
+                WriteBooleanSwitch = null;
             }
         }
     }

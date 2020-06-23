@@ -104,10 +104,6 @@
     <Compile Include="BrowserViewController.designer.cs">
       <DependentUpon>BrowserViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="DummyVC.cs" />
-    <Compile Include="DummyVC.designer.cs">
-      <DependentUpon>DummyVC.cs</DependentUpon>
-    </Compile>
     <Compile Include="PageVC.cs" />
     <Compile Include="PageVC.designer.cs">
       <DependentUpon>PageVC.cs</DependentUpon>

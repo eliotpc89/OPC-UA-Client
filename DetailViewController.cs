@@ -190,8 +190,51 @@ namespace NewTestApp
             }
         }
 
-        
-  
+        partial void WriteBooleanButton(UIButton sender)
+        {
+
+            WriteValue valueToWrite = new WriteValue();
+
+
+            valueToWrite.Value = valData;
+            valueToWrite.NodeId = localNodeid;
+            try
+            {
+                valueToWrite.Value.Value = OpcConnection.ChangeType(WriteBooleanSwitch.On.ToString(), valData.WrappedValue.TypeInfo.BuiltInType);
+            }
+            catch
+            {
+                var BadValAlert = UIAlertController.Create("Write Error", "Invalid Value", UIAlertControllerStyle.Alert);
+                BadValAlert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+                PresentViewController(BadValAlert, true, null);
+            }
+            valueToWrite.AttributeId = Attributes.Value;
+            valueToWrite.Value.StatusCode = StatusCodes.Good;
+            valueToWrite.Value.ServerTimestamp = DateTime.MinValue;
+            valueToWrite.Value.SourceTimestamp = DateTime.MinValue;
+
+            WriteValueCollection valuesToWrite = new WriteValueCollection();
+            valuesToWrite.Add(valueToWrite);
+
+            // write current value.
+            StatusCodeCollection results = null;
+            DiagnosticInfoCollection diagnosticInfos = null;
+
+            ResponseHeader responseHeader = OpcUa.m_session.Write(
+                null,
+                valuesToWrite,
+                out results,
+                out diagnosticInfos);
+
+            ClientBase.ValidateResponse(results, valuesToWrite);
+            ClientBase.ValidateDiagnosticInfos(diagnosticInfos, valuesToWrite);
+
+            // check for error.
+            if (StatusCode.IsBad(results[0]))
+            {
+                throw ServiceResultException.Create(results[0], 0, diagnosticInfos, responseHeader.StringTable);
+            }
+        }
     }
     
 }

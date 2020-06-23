@@ -20,18 +20,13 @@ namespace NewTestApp
         {
             base.ViewDidLoad();
 
-
-
-
             // Perform any additional setup after loading the view, typically from a nib.
 
             var upButtonImage = UIImage.GetSystemImage("chevron.up");
-            
-
 
             upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
             NavigationItem.RightBarButtonItem = upButton;
-            
+
             TableView.Source = dataSource = new DataSource(this);
             foreach (var ii in OpcUa.NodeTreeLoc.Children)
             {
@@ -48,7 +43,7 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             NavigationController.NavigationBarHidden = false;
-            this.Title = OpcUa.NodeTreeLoc.Parent.Data.DisplayName.ToString();
+            this.Title = OpcUa.NodeTreeLoc.Data.DisplayName.ToString();
 
         }
 
@@ -68,7 +63,7 @@ namespace NewTestApp
             if (OpcUa.NodeTreeLoc.Data == OpcUa.NodeTreeRoot.Data)
             {
                 this.Title = "Root";
-                
+
 
             }
             else

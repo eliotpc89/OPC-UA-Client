@@ -13,18 +13,7 @@ namespace NewTestApp
 
     public partial class BrowserViewController : UIDocumentBrowserViewController
     {
-        private string[] allowedUTIs =  {
-                UTType.UTF8PlainText,
-                UTType.PlainText,
-                UTType.RTF,
-                UTType.PNG,
-                UTType.Text,
-                UTType.PDF,
-                UTType.Image,
-                UTType.JSON,
-                UTType.XML
 
-            };
         public bool fileIsNew;
         public string fileName;
         public string fileData;
@@ -32,16 +21,8 @@ namespace NewTestApp
         {
 
             var test = new UIDocumentBrowserViewControllerDelegate();
-
-
-
         }
-        public BrowserViewController(string[] allowedUTIs) : base(allowedUTIs)
-        {
 
-
-
-        }
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
@@ -51,7 +32,6 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-
         }
 
         public override void ViewDidLoad()
@@ -59,7 +39,6 @@ namespace NewTestApp
             base.ViewDidLoad();
             dbvcDelegate dvbcdDel = new dbvcDelegate();
             this.Delegate = dvbcdDel;
-
         }
 
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
@@ -101,8 +80,7 @@ namespace NewTestApp
                 {
                     alert.DismissViewController(true, () =>
                     {
-
-                        this.ShowAlert(controller, "Invalid File Name", "Enter a valid file name");
+                        this.ShowAlert(controller, "Invalid File Name", "Please enter a valid file name");
                     });
                 }
                 else
@@ -149,6 +127,7 @@ namespace NewTestApp
             Console.WriteLine("url = {0}", documentUrls[0].AbsoluteString);
             //bool success = await MoveFileToApp(didPickDocArgs.Url);  
             var success = true;
+
             string filename = documentUrls[0].LastPathComponent;
             string msg = success ? string.Format("Successfully imported file '{0}'", filename) : string.Format("Failed to import file '{0}'", filename);
             var ctrlr = controller as BrowserViewController;
