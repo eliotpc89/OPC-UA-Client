@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using UIKit;
 using Opc.Ua;   // Install-Package OPCFoundation.NetStandard.Opc.Ua
 using Opc.Ua.Client;
+using Foundation;
 
 namespace NewTestApp
 {
@@ -16,6 +17,7 @@ namespace NewTestApp
         public string typName { get; set; }
         public NodeId localNodeid { get; set; }
         public OpcConnection OpcUa { get; set; }
+        public bool viewBool { get; set; }
         public DetailViewController(IntPtr handle) : base(handle)
         {
         }
@@ -47,6 +49,9 @@ namespace NewTestApp
                 ConfigureView();
             }
         }
+
+
+
         void ConfigureView()
         {
             
@@ -85,6 +90,7 @@ namespace NewTestApp
             if (!subscribed)
             {
                 valData = new DataValue(new Variant((int)0));
+                
                 monitoredItem = new MonitoredItem(OpcUa.m_subscription.DefaultItem);
                 OpcUa.CreateMonitoredItem(localNodeid, dispName, true);
                 SubscribeSwitch.SetState(subscribed, false);
@@ -130,7 +136,24 @@ namespace NewTestApp
                         {
                             detailDescriptionLabel.Text = OpcUa.subDict[localNodeid].value.WrappedValue.ToString();//lmonlist[0].Value.ToString();
                             valData = OpcUa.subDict[localNodeid].value;
+                            if (valData.WrappedValue.TypeInfo != null)
+                            {
+                                typName = valData.WrappedValue.TypeInfo.ToString();
+                            }
+                            
                             TypeLabelVar.Text = typName;
+                            if (typName == "Boolean")
+                            {
+                                DataChangeBox.Hidden = true;
+                                WriteBooleanSwitch.Hidden = false;
+                            }
+                            else
+                            {
+                                DataChangeBox.Hidden = false;
+                                WriteBooleanSwitch.Hidden = true;
+                            }
+                            
+
 
                         }
 
@@ -142,9 +165,9 @@ namespace NewTestApp
     
             }
         }
- 
 
-        partial void WriteDataButtonUp(UIButton sender)
+
+        partial void WriteDataButton(UIButton sender)
         {
 
             WriteValue valueToWrite = new WriteValue();
@@ -154,7 +177,15 @@ namespace NewTestApp
             valueToWrite.NodeId = localNodeid;
             try
             {
-                valueToWrite.Value.Value = OpcConnection.ChangeType(DataChangeBox.Text, valData.WrappedValue.TypeInfo.BuiltInType);
+                if (typName == "Boolean")
+                {
+                    valueToWrite.Value.Value = OpcConnection.ChangeType(WriteBooleanSwitch.On.ToString(), valData.WrappedValue.TypeInfo.BuiltInType);
+                }
+                else
+                {
+                    valueToWrite.Value.Value = OpcConnection.ChangeType(DataChangeBox.Text, valData.WrappedValue.TypeInfo.BuiltInType);
+                }
+                
             }
             catch
             {
@@ -190,51 +221,9 @@ namespace NewTestApp
             }
         }
 
-        partial void WriteBooleanButton(UIButton sender)
-        {
-
-            WriteValue valueToWrite = new WriteValue();
+   
 
 
-            valueToWrite.Value = valData;
-            valueToWrite.NodeId = localNodeid;
-            try
-            {
-                valueToWrite.Value.Value = OpcConnection.ChangeType(WriteBooleanSwitch.On.ToString(), valData.WrappedValue.TypeInfo.BuiltInType);
-            }
-            catch
-            {
-                var BadValAlert = UIAlertController.Create("Write Error", "Invalid Value", UIAlertControllerStyle.Alert);
-                BadValAlert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
-                PresentViewController(BadValAlert, true, null);
-            }
-            valueToWrite.AttributeId = Attributes.Value;
-            valueToWrite.Value.StatusCode = StatusCodes.Good;
-            valueToWrite.Value.ServerTimestamp = DateTime.MinValue;
-            valueToWrite.Value.SourceTimestamp = DateTime.MinValue;
-
-            WriteValueCollection valuesToWrite = new WriteValueCollection();
-            valuesToWrite.Add(valueToWrite);
-
-            // write current value.
-            StatusCodeCollection results = null;
-            DiagnosticInfoCollection diagnosticInfos = null;
-
-            ResponseHeader responseHeader = OpcUa.m_session.Write(
-                null,
-                valuesToWrite,
-                out results,
-                out diagnosticInfos);
-
-            ClientBase.ValidateResponse(results, valuesToWrite);
-            ClientBase.ValidateDiagnosticInfos(diagnosticInfos, valuesToWrite);
-
-            // check for error.
-            if (StatusCode.IsBad(results[0]))
-            {
-                throw ServiceResultException.Create(results[0], 0, diagnosticInfos, responseHeader.StringTable);
-            }
-        }
     }
     
 }

@@ -66,7 +66,7 @@ namespace NewTestApp
 
                 nextVc.OpcUa = OpcUa;
                 nextVc.SetDetailItem(indexNodeId, item.monItem.DisplayName);
-
+   
                 //controller.NavigationItem.LeftBarButtonItem = SplitViewController.DisplayModeButtonItem;
                 //controller.NavigationItem.LeftItemsSupplementBackButton = true;
 
