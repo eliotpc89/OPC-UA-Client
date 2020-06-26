@@ -177,7 +177,7 @@ namespace NewTestApp
 
         partial void DisconnectButtonUp(UIButton sender)
         {
-            OpcUa.m_session.CloseSession(null, true);
+            OpcUa.ResetOpc();
             UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.75, 0, UIViewAnimationOptions.CurveEaseInOut, () =>
             {
                 BrowseNodesButton.Alpha = 0;

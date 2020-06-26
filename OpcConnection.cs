@@ -93,19 +93,23 @@ namespace NewTestApp
         }
         public void ResetOpc()
         {
-            connected = false;
-            if (subDict != null)
+            if (connected)
             {
-                List<NodeId> nodeList = new List<NodeId>(subDict.Keys);
-
-                foreach (NodeId ii in nodeList)
+                connected = false;
+                if (subDict != null)
                 {
-                    RemoveMonitoredItem(ii, false);
-                    Console.WriteLine("removing item");
-                }
+                    List<NodeId> nodeList = new List<NodeId>(subDict.Keys);
 
-                m_session.CloseSession(null, true);
+                    foreach (NodeId ii in nodeList)
+                    {
+                        RemoveMonitoredItem(ii, false);
+                        Console.WriteLine("removing item");
+                    }
+
+                    m_session.CloseSession(null, true);
+                }
             }
+
             
         }
         public void Connect(string OpcAddress)
