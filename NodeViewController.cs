@@ -97,9 +97,7 @@ namespace NewTestApp
                 var nextVc = segue.DestinationViewController
                          as DetailViewController;
                 nextVc.OpcUa = OpcUa;
-
                 nextVc.SetDetailItem(item);
-
                 NavigationController.NavigationItem.LeftItemsSupplementBackButton = true;
 
             }

@@ -5,6 +5,7 @@ using Opc.Ua;
 using System;
 using System.IO;
 using UIKit;
+using CoreGraphics;
 
 namespace NewTestApp
 {
@@ -14,6 +15,9 @@ namespace NewTestApp
         public OpcConnection OpcUa;
         public bool fileIsNew;
         public bool fileIsLoaded;
+
+        UIViewPropertyAnimator ConnectAnimator, DisconnectAnimator;
+
         public ConnectViewController(IntPtr handle) : base(handle)
         {
 
@@ -37,7 +41,16 @@ namespace NewTestApp
             base.ViewDidLoad();
 
             fileIsLoaded = false;
+            
 
+            
+            DisconnectAnimator = new UIViewPropertyAnimator(0.75, UIViewAnimationCurve.EaseInOut, () =>
+            {
+                BrowseNodesButton.Alpha = 0;
+                MonitorSubButton.Alpha = 0;
+                DisconnectButton.Alpha = 0;
+                ConnectButton.Alpha = 1;
+            });
 
         }
 
@@ -105,12 +118,28 @@ namespace NewTestApp
                 OpcUa = new OpcConnection();
                 OpcUa.fileName = cvcFileName;
             }
-
+            
             OpcUa.Connect(ConnectAddress.Text.ToString());
+            origConnectFrame = ConnectAddress.Frame;
+            ConnectAddress.SizeToFit();
 
+            
+ 
+            UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.75,0, UIViewAnimationOptions.CurveEaseInOut, () =>
+            {
+                BrowseNodesButton.Alpha = 1;
+                MonitorSubButton.Alpha = 1;
+                DisconnectButton.Alpha = 1;
+                ConnectButton.Alpha = 0;
+                ConnectAddress.TextAlignment = UITextAlignment.Center;
+                ConnectAddress.BorderStyle = UITextBorderStyle.None;
+                ConnectAddress.Center = new CoreGraphics.CGPoint(ParentViewController.View.Center.X, ConnectAddress.Center.Y); 
+                
+            }, null);
 
-
-
+            
+            ConnectAddress.UserInteractionEnabled = false;
+            
         }
         private string[] allowedUTIs =  {
                     UTType.UTF8PlainText,
@@ -128,6 +157,7 @@ namespace NewTestApp
         {
 
         };
+        private CGRect origConnectFrame;
 
         private void Picker_WasCancelled(object sender, EventArgs e)
         {
@@ -144,6 +174,28 @@ namespace NewTestApp
 
             NavigationController.PopToRootViewController(true);
         }
+
+        partial void DisconnectButtonUp(UIButton sender)
+        {
+            OpcUa.m_session.CloseSession(null, true);
+            UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.75, 0, UIViewAnimationOptions.CurveEaseInOut, () =>
+            {
+                BrowseNodesButton.Alpha = 0;
+                MonitorSubButton.Alpha = 0;
+                DisconnectButton.Alpha = 0;
+                ConnectButton.Alpha = 1;
+                ConnectAddress.TextAlignment = UITextAlignment.Left;
+                ConnectAddress.BorderStyle = UITextBorderStyle.RoundedRect;
+                ConnectAddress.Frame = origConnectFrame;
+            }, null);
+
+
+
+            ConnectAddress.UserInteractionEnabled = true;
+            
+
+        }
+
     }
 
 

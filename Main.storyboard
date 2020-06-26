@@ -64,7 +64,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="1557" fixedFrame="YES">
-                                <rect key="frame" x="82" y="198" width="249" height="53"/>
+                                <rect key="frame" x="82" y="196" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Connect">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -73,24 +73,24 @@
                                     <action selector="OpcUaConnectUp:" destination="909" id="10753" eventType="touchUpInside"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="opc.tcp://192.168.0.157:4840" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3202">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3202" borderStyle="roundedRect" usesAttributedText="YES" allowsEditingTextAttributes="YES">
                                 <rect key="frame" x="39" y="160" width="336" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" allowsDirectInteraction="YES"/>
                                 </accessibility>
+                                <attributedString key="attributedText">
+                                    <fragment content="opc.tcp://192.168.0.157:4840">
+                                        <attributes>
+                                            <font key="NSFont" name="HelveticaNeue" family="Helvetica Neue" size="14"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="URL" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3233">
-                                <rect key="frame" x="186" y="126" width="42" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="10755" fixedFrame="YES">
-                                <rect key="frame" x="82" y="259" width="249" height="53"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="10755" fixedFrame="YES" alpha="0.0">
+                                <rect key="frame" x="82" y="322" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Browse Nodes">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -100,8 +100,8 @@
                                     <segue id="37457" destination="7bK-jq-Zjz" kind="show" identifier="showNodes"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="14543" fixedFrame="YES">
-                                <rect key="frame" x="82" y="320" width="249" height="53"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="14543" fixedFrame="YES" alpha="0.0">
+                                <rect key="frame" x="82" y="383" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Monitor Subscriptions">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -112,7 +112,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="26799" fixedFrame="YES">
-                                <rect key="frame" x="82" y="381" width="249" height="53"/>
+                                <rect key="frame" x="82" y="99" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="File Picker">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -129,6 +129,17 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="46798" fixedFrame="YES" alpha="0.0">
+                                <rect key="frame" x="82" y="257" width="249" height="53"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Disconnect">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
+                                </state>
+                                <connections>
+                                    <action selector="OpcUaConnectUp:" destination="46800" id="46799" eventType="touchUpInside"/>
+                                    <action selector="DisconnectButtonUp:" destination="909" id="46805" eventType="touchUpInside"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     </view>
@@ -136,6 +147,10 @@
                     <connections>
                         <outlet property="ConnectAddress" destination="3202" id="name-outlet-3202"/>
                         <outlet property="TitleFileName" destination="35225" id="name-outlet-35225"/>
+                        <outlet property="BrowseNodesButton" destination="10755" id="name-outlet-10755"/>
+                        <outlet property="MonitorSubButton" destination="14543" id="name-outlet-14543"/>
+                        <outlet property="DisconnectButton" destination="46798" id="name-outlet-46798"/>
+                        <outlet property="ConnectButton" destination="1557" id="name-outlet-1557"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="911" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -16,11 +16,31 @@ namespace NewTestApp
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton BrowseNodesButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField ConnectAddress { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton ConnectButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton DisconnectButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton MonitorSubButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel TitleFileName { get; set; }
+
+        [Action ("DisconnectButtonUp:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void DisconnectButtonUp (UIKit.UIButton sender);
 
         [Action ("OpcUaConnectUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -32,9 +52,29 @@ namespace NewTestApp
 
         void ReleaseDesignerOutlets ()
         {
+            if (BrowseNodesButton != null) {
+                BrowseNodesButton.Dispose ();
+                BrowseNodesButton = null;
+            }
+
             if (ConnectAddress != null) {
                 ConnectAddress.Dispose ();
                 ConnectAddress = null;
+            }
+
+            if (ConnectButton != null) {
+                ConnectButton.Dispose ();
+                ConnectButton = null;
+            }
+
+            if (DisconnectButton != null) {
+                DisconnectButton.Dispose ();
+                DisconnectButton = null;
+            }
+
+            if (MonitorSubButton != null) {
+                MonitorSubButton.Dispose ();
+                MonitorSubButton = null;
             }
 
             if (TitleFileName != null) {
