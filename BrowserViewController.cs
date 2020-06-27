@@ -44,16 +44,19 @@ namespace NewTestApp
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
             base.PrepareForSegue(segue, sender);
-
+            var nextVc = segue.DestinationViewController
+                         as ConnectViewController;
             if (segue.Identifier == "PageVcSegue")
             {
-                var nextVc = segue.DestinationViewController
-                                         as ConnectViewController;
+
                 nextVc.cvcFileName = fileName;
+                
                 nextVc.fileIsNew = fileIsNew;
                 Console.WriteLine("Performing Segue to CVC: {0}", fileName);
 
             }
+
+
         }
 
         public virtual void DidImportDocument(UIDocumentBrowserViewController controller, NSUrl sourceUrl, NSUrl destinationUrl)
@@ -134,6 +137,7 @@ namespace NewTestApp
             NSData data = NSData.FromUrl(documentUrls[0]);
             ctrlr.fileData = data.ToString();
             ctrlr.fileName = filename;
+
             ctrlr.fileIsNew = false;
 
             Console.WriteLine(filename);

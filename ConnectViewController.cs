@@ -12,6 +12,7 @@ namespace NewTestApp
     public partial class ConnectViewController : UIViewController
     {
         public string cvcFileName;
+        public string cvcAddress;
         public OpcConnection OpcUa;
         public bool fileIsNew;
         public bool fileIsLoaded;
@@ -34,7 +35,11 @@ namespace NewTestApp
         {
             base.ViewDidAppear(animated);
 
-            NavigationController.Title = cvcFileName;
+
+            if (!fileIsNew)
+            {
+                ConnectAddress.Text = cvcAddress;
+            }
         }
         public override void ViewDidLoad()
         {
@@ -57,17 +62,18 @@ namespace NewTestApp
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            TitleFileName.Text = cvcFileName;
-            NavigationItem.Title = cvcFileName;
-            NavigationController.Title = cvcFileName;
+            TitleFileName.Text = cvcFileName.Substring(0, cvcFileName.Length - ".json".Length);
+            NavigationItem.Title = TitleFileName.Text;
+            NavigationController.Title = TitleFileName.Text;
             NavigationController.NavigationBarHidden = true;
             if (!fileIsNew && !fileIsLoaded)
             {
 
                 OpcUa = new OpcConnection(cvcFileName);
                 fileIsLoaded = true;
-
+                ConnectAddress.Text = OpcUa.savedAddress;
             }
+            
         }
 
         public override void ViewDidDisappear(bool animated)
@@ -118,8 +124,15 @@ namespace NewTestApp
                 OpcUa = new OpcConnection();
                 OpcUa.fileName = cvcFileName;
             }
-            
-            OpcUa.Connect(ConnectAddress.Text.ToString());
+            try
+            {
+                OpcUa.Connect(ConnectAddress.Text.ToString());
+            }
+            catch
+            {
+                OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
+                return;
+            }
             origConnectFrame = ConnectAddress.Frame;
             ConnectAddress.SizeToFit();
 
@@ -141,22 +154,7 @@ namespace NewTestApp
             ConnectAddress.UserInteractionEnabled = false;
             
         }
-        private string[] allowedUTIs =  {
-                    UTType.UTF8PlainText,
-                    UTType.PlainText,
-                    UTType.RTF,
-                    UTType.PNG,
-                    UTType.Text,
-                    UTType.PDF,
-                    UTType.Image,
-                    UTType.JSON,
-                    UTType.XML
 
-                };
-        private string[] allowedUrls =
-        {
-
-        };
         private CGRect origConnectFrame;
 
         private void Picker_WasCancelled(object sender, EventArgs e)

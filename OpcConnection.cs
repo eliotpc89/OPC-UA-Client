@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Foundation;
+using UIKit;
 
 namespace NewTestApp
 {
@@ -76,13 +77,14 @@ namespace NewTestApp
             Console.WriteLine(data);
             if (data != null)
             {
-                if(!(subDict is null))
+                if (!(subDict is null))
                 {
                     ResetOpc();
                 }
-                
+
                 savedObject = JsonConvert.DeserializeObject<SavedObject>(data.ToString());
-                Connect(savedObject.fileSavedAddress);
+                savedAddress = savedObject.fileSavedAddress;
+                Connect(savedAddress);
                 CreateMonitoredItems(savedObject.fileSubMon);
 
 
@@ -110,7 +112,7 @@ namespace NewTestApp
                 }
             }
 
-            
+
         }
         public void Connect(string OpcAddress)
 
@@ -206,7 +208,8 @@ namespace NewTestApp
             m_session = reconnectHandler.Session;
             reconnectHandler.Dispose();
             reconnectHandler = null;
-
+            var tempSubList = (List<Subscription>)m_session.Subscriptions;
+            m_subscription = tempSubList[0];
             Console.WriteLine("--- RECONNECTED ---");
         }
 
@@ -217,7 +220,9 @@ namespace NewTestApp
 
             NodeId lNodeId = ExpandedNodeId.ToNodeId(treeNode.Data.NodeId, m_session.NamespaceUris);
             NodeTreeLoc = treeNode;
+
             m_session.Browse(null, null, lNodeId, 10000u, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, out cp, out nextRefs);
+
 
             if (nextRefs.Count > 0)
             {
@@ -256,7 +261,7 @@ namespace NewTestApp
         {
             m_subscription.RemoveItems(m_subscription.MonitoredItems);
 
-            foreach(MonitoredItem ii in fSubMon)
+            foreach (MonitoredItem ii in fSubMon)
             {
                 CreateMonitoredItem(ii.ResolvedNodeId, ii.DisplayName, false);
             }
@@ -334,7 +339,7 @@ namespace NewTestApp
             {
                 SaveFile();
             }
-            
+
         }
         public void MonitoredItem_Notification(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
         {
@@ -435,6 +440,27 @@ namespace NewTestApp
             }
 
             return value;
+        }
+        public void ConnectError(UIViewController controller, bool popToRoot, string title, string prompt)
+        {
+            UIAlertController alert = UIAlertController.Create(title, prompt, UIAlertControllerStyle.Alert);
+            var ctrlr = controller as BrowserViewController;
+            alert.AddAction(UIAlertAction.Create("Dismiss", UIAlertActionStyle.Default, action =>
+            {
+                alert.DismissViewController(true, () =>
+                {
+                    if (popToRoot)
+                    {
+                        controller.NavigationController.PopToRootViewController(true);
+                    }
+                    
+                });
+
+            }));
+            controller.PresentViewController(alert, animated: true, null);
+            NodeTreeLoc = NodeTreeRoot;
+            ResetOpc();
+
         }
 
     }

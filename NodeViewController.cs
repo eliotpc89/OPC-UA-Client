@@ -110,7 +110,18 @@ namespace NewTestApp
             var indexTreeNode = dataSource.Objects[indexPath.Row] as TreeNode<ReferenceDescription>;
             var item = indexTreeNode.Data;
             Console.WriteLine("shouldperform?");
-            if (OpcUa.BrowseNextTree(indexTreeNode))
+            bool hasChildren = false;
+            try
+            {
+                hasChildren = OpcUa.BrowseNextTree(indexTreeNode);
+            }
+            catch
+            {
+                OpcUa.ConnectError(this, true, "Connection Failed", "Failed to Connect to OPC UA Server");
+                return false;
+            }
+
+            if (hasChildren)
             {
                 this.Title = item.DisplayName.ToString();
                 dataSource.Objects.Clear();
