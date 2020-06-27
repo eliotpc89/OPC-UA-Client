@@ -16,16 +16,13 @@ namespace NewTestApp
         public OpcConnection OpcUa;
         public bool fileIsNew;
         public bool fileIsLoaded;
+        public bool connected;
 
         UIViewPropertyAnimator ConnectAnimator, DisconnectAnimator;
 
         public ConnectViewController(IntPtr handle) : base(handle)
         {
 
-        }
-        public void SetConnectAddress(string nAddress)
-        {
-            ConnectAddress.Text = nAddress;
         }
         public ConnectViewController() : base()
         {
@@ -36,24 +33,20 @@ namespace NewTestApp
             base.ViewDidAppear(animated);
 
 
-            if (!fileIsNew)
-            {
-                ConnectAddress.Text = cvcAddress;
-            }
+
         }
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             fileIsLoaded = false;
-            
 
-            
+
             DisconnectAnimator = new UIViewPropertyAnimator(0.75, UIViewAnimationCurve.EaseInOut, () =>
             {
                 BrowseNodesButton.Alpha = 0;
                 MonitorSubButton.Alpha = 0;
-                DisconnectButton.Alpha = 0;
+  
                 ConnectButton.Alpha = 1;
             });
 
@@ -66,12 +59,28 @@ namespace NewTestApp
             NavigationItem.Title = TitleFileName.Text;
             NavigationController.Title = TitleFileName.Text;
             NavigationController.NavigationBarHidden = true;
+            if (!connected)
+            {
+                BrowseNodesButton.Alpha = 0;
+                MonitorSubButton.Alpha = 0;
+                ConnectButton.Alpha = 1;
+
+            }
+
+
             if (!fileIsNew && !fileIsLoaded)
             {
 
+ 
+                ConnectButton.Alpha = 1;
+                var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge);
+                activitySpinner.StartAnimating();
                 OpcUa = new OpcConnection(cvcFileName);
+                activitySpinner.StopAnimating();
                 fileIsLoaded = true;
                 ConnectAddress.Text = OpcUa.savedAddress;
+
+                AnimateConnection();
             }
             
         }
@@ -126,32 +135,18 @@ namespace NewTestApp
             }
             try
             {
+                var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
+                activitySpinner.StartAnimating();
                 OpcUa.Connect(ConnectAddress.Text.ToString());
+                activitySpinner.StopAnimating();
             }
             catch
             {
                 OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
                 return;
             }
-            origConnectFrame = ConnectAddress.Frame;
-            ConnectAddress.SizeToFit();
+            AnimateConnection();
 
-            
- 
-            UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.75,0, UIViewAnimationOptions.CurveEaseInOut, () =>
-            {
-                BrowseNodesButton.Alpha = 1;
-                MonitorSubButton.Alpha = 1;
-                DisconnectButton.Alpha = 1;
-                ConnectButton.Alpha = 0;
-                ConnectAddress.TextAlignment = UITextAlignment.Center;
-                ConnectAddress.BorderStyle = UITextBorderStyle.None;
-                ConnectAddress.Center = new CoreGraphics.CGPoint(ParentViewController.View.Center.X, ConnectAddress.Center.Y); 
-                
-            }, null);
-
-            
-            ConnectAddress.UserInteractionEnabled = false;
             
         }
 
@@ -162,36 +157,31 @@ namespace NewTestApp
             Console.WriteLine("Picker was Cancelled");
         }
 
+        private void AnimateConnection()
+        {
+            origConnectFrame = ConnectAddress.Frame;
+            ConnectAddress.SizeToFit();
+            UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.75, 0, UIViewAnimationOptions.CurveEaseInOut, () =>
+            {
+                BrowseNodesButton.Alpha = 1;
+                MonitorSubButton.Alpha = 1;
+                ConnectButton.Alpha = 0;
+                ConnectAddress.TextAlignment = UITextAlignment.Center;
+                ConnectAddress.BorderStyle = UITextBorderStyle.None;
+                ConnectAddress.Center = new CoreGraphics.CGPoint(ParentViewController.View.Center.X, ConnectAddress.Center.Y);
 
+            }, null);
+            ConnectAddress.UserInteractionEnabled = false;
+            connected = true;
+        }
         partial void ReturnToFileBrowserButton(UIButton sender)
         {
             if(!(OpcUa is null))
             {
                 OpcUa.ResetOpc();
             }
-
+            connected = false;
             NavigationController.PopToRootViewController(true);
-        }
-
-        partial void DisconnectButtonUp(UIButton sender)
-        {
-            OpcUa.ResetOpc();
-            UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.75, 0, UIViewAnimationOptions.CurveEaseInOut, () =>
-            {
-                BrowseNodesButton.Alpha = 0;
-                MonitorSubButton.Alpha = 0;
-                DisconnectButton.Alpha = 0;
-                ConnectButton.Alpha = 1;
-                ConnectAddress.TextAlignment = UITextAlignment.Left;
-                ConnectAddress.BorderStyle = UITextBorderStyle.RoundedRect;
-                ConnectAddress.Frame = origConnectFrame;
-            }, null);
-
-
-
-            ConnectAddress.UserInteractionEnabled = true;
-            
-
         }
 
     }

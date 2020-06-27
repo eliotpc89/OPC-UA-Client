@@ -44,6 +44,7 @@ namespace NewTestApp
             base.ViewWillAppear(animated);
             NavigationController.NavigationBarHidden = false;
             this.Title = OpcUa.NodeTreeLoc.Data.DisplayName.ToString();
+            TableView.ReloadData();
 
         }
 
@@ -190,6 +191,7 @@ namespace NewTestApp
                 var cell = tableView.DequeueReusableCell(CellIdentifier, indexPath);
                 var cellTreeNode = objects[indexPath.Row] as TreeNode<ReferenceDescription>;
                 var node = cellTreeNode.Data;
+                var nodeId = ExpandedNodeId.ToNodeId(node.NodeId, controller.OpcUa.m_session.NamespaceUris);
                 cell.TextLabel.Text = node.DisplayName.ToString();
                 Console.WriteLine(node.NodeClass.ToString());
                 if (node.NodeClass.ToString() == "Object")
@@ -198,31 +200,101 @@ namespace NewTestApp
                 }
                 else
                 {
-                    cell.ImageView.Image = UIImage.GetSystemImage("square");
+                    if (controller.OpcUa.subDict.ContainsKey(nodeId))
+                    {
+                        cell.ImageView.Image = UIImage.GetSystemImage("square.fill");
+                    }
+                    else
+                    {
+                        cell.ImageView.Image = UIImage.GetSystemImage("square");
+                    }
+
                 }
 
                 return cell;
             }
 
+            
             public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
             {
                 // Return false if you do not want the specified item to be editable.
-                return true;
+                var cellTreeNode = objects[indexPath.Row] as TreeNode<ReferenceDescription>;
+                var node = cellTreeNode.Data;
+                var nodeId = ExpandedNodeId.ToNodeId(node.NodeId, controller.OpcUa.m_session.NamespaceUris);
+
+                return (node.NodeClass.ToString() != "Object");
+
             }
 
             public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
             {
                 if (editingStyle == UITableViewCellEditingStyle.Delete)
                 {
-                    // Delete the row from the data source.
-                    objects.RemoveAt(indexPath.Row);
-                    controller.TableView.DeleteRows(new[] { indexPath }, UITableViewRowAnimation.Fade);
+                    var cellTreeNode = objects[indexPath.Row] as TreeNode<ReferenceDescription>;
+                    var node = cellTreeNode.Data;
+                    var nodeId = ExpandedNodeId.ToNodeId(node.NodeId, controller.OpcUa.m_session.NamespaceUris);
+
+                    controller.OpcUa.RemoveMonitoredItem(nodeId, true);
+                    NSIndexPath[] indexPathArr = { indexPath };
+                    controller.TableView.ReloadRows(indexPathArr, UITableViewRowAnimation.Fade);
+
+
                 }
                 else if (editingStyle == UITableViewCellEditingStyle.Insert)
                 {
                     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
                 }
             }
+            public override string TitleForDeleteConfirmation(UITableView tableView, NSIndexPath indexPath)
+            {   // Optional - default text is 'Delete'
+                return "Unsubscribe";
+            }
+            public override UISwipeActionsConfiguration GetLeadingSwipeActionsConfiguration(UITableView tableView, NSIndexPath indexPath)
+            {
+                var flagAction = ContextualFlagAction(indexPath.Row);
+                var leadingSwipe = UISwipeActionsConfiguration.FromActions(new UIContextualAction[] { flagAction });
+
+                leadingSwipe.PerformsFirstActionWithFullSwipe = true;
+                return leadingSwipe;
+            }
+
+
+            public UIContextualAction ContextualFlagAction(int row)
+            {
+                var action = UIContextualAction.FromContextualActionStyle(UIContextualActionStyle.Normal,
+                    "Subscribe",
+                    (FlagAction, view, success) =>
+                    {
+                        var cellTreeNode = objects[row] as TreeNode<ReferenceDescription>;
+                        var node = cellTreeNode.Data;
+                        var nodeId = ExpandedNodeId.ToNodeId(node.NodeId, controller.OpcUa.m_session.NamespaceUris);
+                        string dispNamePfx = controller.OpcUa.NodeTreeLoc.Data.DisplayName.ToString();
+                        string dispName = dispNamePfx + "." + node.DisplayName.ToString();
+                        try
+                        {
+                            if(node.NodeClass.ToString() != "Object")
+                            {
+                                controller.OpcUa.CreateMonitoredItem(nodeId, dispName, true);
+                            }
+                            
+                        }
+                        catch
+                        {
+
+                        }
+                        NSIndexPath[] indexPath = { NSIndexPath.FromRowSection(row, 0) };
+                        controller.TableView.ReloadRows(indexPath, UITableViewRowAnimation.Fade);
+                    
+                        success(true);
+                    });
+
+                action.Image = UIImage.FromFile("feedback.png");
+                action.BackgroundColor = UIColor.Blue;
+
+                return action;
+            }
+
+
         }
 
 

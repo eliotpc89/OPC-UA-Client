@@ -33,6 +33,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" causesPageTurn="YES"/>
+                                </accessibility>
                             </tableViewCell>
                         </prototypes>
                         <sections/>
@@ -89,8 +92,8 @@
                                     </fragment>
                                 </attributedString>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="10755" fixedFrame="YES" alpha="0.0">
-                                <rect key="frame" x="82" y="322" width="249" height="53"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="10755" fixedFrame="YES">
+                                <rect key="frame" x="82" y="257" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Browse Nodes">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -100,8 +103,8 @@
                                     <segue id="37457" destination="7bK-jq-Zjz" kind="show" identifier="showNodes"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="14543" fixedFrame="YES" alpha="0.0">
-                                <rect key="frame" x="82" y="383" width="249" height="53"/>
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="14543" fixedFrame="YES">
+                                <rect key="frame" x="82" y="318" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Monitor Subscriptions">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -114,12 +117,12 @@
                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="26799" fixedFrame="YES">
                                 <rect key="frame" x="82" y="99" width="249" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="File Picker">
+                                <state key="normal" title="Browse File">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
                                 </state>
                                 <connections>
                                     <action selector="OpcUaConnectUp:" destination="26801" id="26800" eventType="touchUpInside"/>
-                                    <action selector="ReturnToFileBrowserButton:" destination="909" id="37054" eventType="touchUpInside"/>
+                                    <action selector="ReturnToFileBrowserButton:" destination="909" id="58397" eventType="touchUpInside"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="35225" fixedFrame="YES">
@@ -129,17 +132,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="683" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="46798" fixedFrame="YES" alpha="0.0">
-                                <rect key="frame" x="82" y="257" width="249" height="53"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Disconnect">
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
-                                </state>
-                                <connections>
-                                    <action selector="OpcUaConnectUp:" destination="46800" id="46799" eventType="touchUpInside"/>
-                                    <action selector="DisconnectButtonUp:" destination="909" id="46805" eventType="touchUpInside"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     </view>
@@ -149,7 +141,6 @@
                         <outlet property="TitleFileName" destination="35225" id="name-outlet-35225"/>
                         <outlet property="BrowseNodesButton" destination="10755" id="name-outlet-10755"/>
                         <outlet property="MonitorSubButton" destination="14543" id="name-outlet-14543"/>
-                        <outlet property="DisconnectButton" destination="46798" id="name-outlet-46798"/>
                         <outlet property="ConnectButton" destination="1557" id="name-outlet-1557"/>
                     </connections>
                 </viewController>

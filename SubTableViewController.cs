@@ -32,7 +32,7 @@ namespace NewTestApp
         {
             base.ViewDidLoad();
 
-
+            NavigationItem.Title = "Subscriptions";
             TableView.Source = dataSource = new DataSource(this);
             List<NodeId> nodeList = new List<NodeId>(OpcUa.subDict.Keys);
 

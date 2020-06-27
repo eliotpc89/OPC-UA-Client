@@ -37,6 +37,7 @@ namespace NewTestApp
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
             dbvcDelegate dvbcdDel = new dbvcDelegate();
             this.Delegate = dvbcdDel;
         }
@@ -50,7 +51,6 @@ namespace NewTestApp
             {
 
                 nextVc.cvcFileName = fileName;
-                
                 nextVc.fileIsNew = fileIsNew;
                 Console.WriteLine("Performing Segue to CVC: {0}", fileName);
 
@@ -134,10 +134,7 @@ namespace NewTestApp
             string filename = documentUrls[0].LastPathComponent;
             string msg = success ? string.Format("Successfully imported file '{0}'", filename) : string.Format("Failed to import file '{0}'", filename);
             var ctrlr = controller as BrowserViewController;
-            NSData data = NSData.FromUrl(documentUrls[0]);
-            ctrlr.fileData = data.ToString();
             ctrlr.fileName = filename;
-
             ctrlr.fileIsNew = false;
 
             Console.WriteLine(filename);

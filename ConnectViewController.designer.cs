@@ -28,19 +28,11 @@ namespace NewTestApp
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton DisconnectButton { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton MonitorSubButton { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel TitleFileName { get; set; }
-
-        [Action ("DisconnectButtonUp:")]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        partial void DisconnectButtonUp (UIKit.UIButton sender);
 
         [Action ("OpcUaConnectUp:")]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -65,11 +57,6 @@ namespace NewTestApp
             if (ConnectButton != null) {
                 ConnectButton.Dispose ();
                 ConnectButton = null;
-            }
-
-            if (DisconnectButton != null) {
-                DisconnectButton.Dispose ();
-                DisconnectButton = null;
             }
 
             if (MonitorSubButton != null) {
