@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>NewTestApp</string>
+	<string>UA Client Connect</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.companyname.NewTestApp</string>
+	<string>Eliot.UaClientConnect</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
@@ -68,6 +68,27 @@
 			<array>
 				<string>public.json</string>
 			</array>
+			<key>CFBundleTypeIconFiles</key>
+			<array>
+				<string>U LOGO</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>JSON Documet</string>
+			<key>UTTypeSize64IconFile</key>
+			<string>U LOGO</string>
+			<key>UTTypeSize320IconFile</key>
+			<string>U LOGO</string>
+			<key>UTTypeIdentifier</key>
+			<string>public.json</string>
 		</dict>
 	</array>
 </dict>
