@@ -55,7 +55,9 @@ namespace NewTestApp
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            string tempName = fullFileName.RelativePath;
+            //string tempName = fullFileName.RelativePath;
+            string tempName = fullFileName.FilePathUrl.ToString().Remove(0, "file://".Length);
+
             Console.WriteLine("DocWrite: " + tempName);
             Console.WriteLine("DocContent: " + "Hello");
             File.WriteAllText(tempName, "Hello My Name is Eliot");

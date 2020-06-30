@@ -138,7 +138,7 @@ namespace NewTestApp
 
             var docsDir = Path.GetTempPath();
             var ctrlr = controller as BrowserViewController;
-            string urlPath = Path.Combine(docsDir, "EPC1456789.json");
+            string urlPath = Path.Combine(docsDir, "EPC116789.json");
             try
             {
                 if (File.Exists(urlPath))
@@ -150,18 +150,9 @@ namespace NewTestApp
 
             File.Create(urlPath);
             NSUrl nsu = new NSUrl(urlPath);
-            
-
             var url = NSUrl.FromFilename(urlPath);
-            ctrlr.Doc = new MyDocument(url);
-
-            ctrlr.fullFilename = ctrlr.Doc.FileUrl.FileReferenceUrl;
-
-            
+            ctrlr.fullFilename = url.FileReferenceUrl;
             ctrlr.fileName = url.LastPathComponent;
-
-
-
             importHandler(url, UIDocumentBrowserImportMode.Move);
 
 
