@@ -29,7 +29,8 @@
 <CodesignKey>Apple Development: eliotpc89@gmail.com (425Z29RP34)</CodesignKey>
 <LangVersion>8.0</LangVersion>
 <MtouchFastDev>true</MtouchFastDev>
-<CodesignProvision>VS: WildCard Development</CodesignProvision>
+<CodesignProvision>VS: Eliot.UaClientConnect Development</CodesignProvision>
+<CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -58,6 +59,7 @@
     <LangVersion>8.0</LangVersion>
     <BuildIpa>true</BuildIpa>
 <MtouchInterpreter>-all</MtouchInterpreter>
+<AssemblyName>UaConnectClient</AssemblyName>
 <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -71,8 +73,9 @@
     <CodesignKey>Apple Development: eliotpc89@gmail.com (425Z29RP34)</CodesignKey>
     <LangVersion>8.0</LangVersion>
     <BuildIpa>true</BuildIpa>
-    <IpaPackageName>UaClientCOnnect</IpaPackageName>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <IpaPackageName>UaClientConnect</IpaPackageName>
+    <AssemblyName>UaConnectClient</AssemblyName>
+    <CodesignProvision>iOS Team Provisioning Profile: Eliot.UaClientConnect</CodesignProvision>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -123,6 +126,7 @@
       <DependentUpon>AboutViewController.cs</DependentUpon>
     </Compile>
     <None Include="UaClientConnect.ipa" />
+    <Compile Include="MyDocument.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetailViewController.cs" />
@@ -139,40 +143,27 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon167.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon120.png">
-      <Visible>false</Visible>
-    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon152.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon180.png">
       <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon29.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon40.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon58.png">
-      <Visible>false</Visible>
-    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon76.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon80.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon87.png">
       <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon20.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon60.png">
-      <Visible>false</Visible>
-    </ImageAsset>
     <InterfaceDefinition Include="Main.storyboard" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-20.0x20.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-20.0x20.0%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-29.0x29.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-29.0x29.0%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-40.0x40.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-40.0x40.0%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-60.0x60.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-60.0x60.0%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

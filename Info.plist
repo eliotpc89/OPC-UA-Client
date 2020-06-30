@@ -4,8 +4,6 @@
 <dict>
 	<key>CFBundleDisplayName</key>
 	<string>UA Client Connect</string>
-	<key>CFBundleIdentifier</key>
-	<string>Eliot.UaClientConnect</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
@@ -47,8 +45,6 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>XSAppIconAssets</key>
-	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
@@ -75,18 +71,31 @@
 		</dict>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeDescription</key>
-			<string>JSON Documet</string>
+			<string>JSON Document</string>
 			<key>UTTypeSize64IconFile</key>
 			<string>U LOGO</string>
 			<key>UTTypeSize320IconFile</key>
 			<string>U LOGO</string>
+			<key>UTTypeIdentifier</key>
+			<string>public.json</string>
+		</dict>
+	</array>
+	<key>CFBundleIdentifier</key>
+	<string>Eliot.UaClientConnect</string>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>JSON Document</string>
 			<key>UTTypeIdentifier</key>
 			<string>public.json</string>
 		</dict>

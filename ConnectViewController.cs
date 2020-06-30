@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using UIKit;
 using CoreGraphics;
+using System.Text;
 
 namespace NewTestApp
 {
@@ -13,11 +14,12 @@ namespace NewTestApp
     {
         public string cvcFileName;
         public string cvcAddress;
+        public NSUrl fullFileName;
         public OpcConnection OpcUa;
         public bool fileIsNew;
         public bool fileIsLoaded;
         public bool connected;
-
+        public MyDocument Doc;
         UIViewPropertyAnimator ConnectAnimator, DisconnectAnimator;
 
         public ConnectViewController(IntPtr handle) : base(handle)
@@ -31,9 +33,7 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-
-
-
+    
         }
         public override void ViewDidLoad()
         {
@@ -55,6 +55,11 @@ namespace NewTestApp
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
+            string tempName = fullFileName.RelativePath;
+            Console.WriteLine("DocWrite: " + tempName);
+            Console.WriteLine("DocContent: " + "Hello");
+            File.WriteAllText(tempName, "Hello My Name is Eliot");
+
             TitleFileName.Text = cvcFileName.Substring(0, cvcFileName.Length - ".json".Length);
             NavigationItem.Title = TitleFileName.Text;
             NavigationController.Title = TitleFileName.Text;
@@ -75,7 +80,7 @@ namespace NewTestApp
                 ConnectButton.Alpha = 1;
                 var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge);
                 activitySpinner.StartAnimating();
-                OpcUa = new OpcConnection(cvcFileName);
+                OpcUa = new OpcConnection(fullFileName);
                 activitySpinner.StopAnimating();
                 fileIsLoaded = true;
                 ConnectAddress.Text = OpcUa.savedAddress;
@@ -88,7 +93,9 @@ namespace NewTestApp
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
-            
+
+
+
         }
 
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
@@ -132,6 +139,8 @@ namespace NewTestApp
             {
                 OpcUa = new OpcConnection();
                 OpcUa.fileName = cvcFileName;
+                OpcUa.fullFileName = fullFileName.AbsoluteString;
+                //doc.Write(Encoding.ASCII.GetBytes("HOLLEOLFJEOFJLEKJFOJEOFJEJOFEOJF"));
             }
             try
             {
