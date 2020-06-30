@@ -44,7 +44,7 @@ namespace NewTestApp
             base.ViewWillAppear(animated);
             NavigationController.NavigationBarHidden = false;
             this.Title = OpcUa.NodeTreeLoc.Data.DisplayName.ToString();
-            TableView.ReloadData();
+            TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Left);
 
         }
 
@@ -79,7 +79,7 @@ namespace NewTestApp
                 dataSource.Objects.Add(rd);
 
             }
-            TableView.ReloadData();
+            TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Right);
 
         }
 
@@ -135,8 +135,8 @@ namespace NewTestApp
                     Console.WriteLine(rd.Data.TypeDefinition.ToString());
 
                 }
-
-                TableView.ReloadData();
+                
+                TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Left);
                 return false;
             }
             OpcUa.NodeTreeLoc = OpcUa.NodeTreeLoc.Parent;
