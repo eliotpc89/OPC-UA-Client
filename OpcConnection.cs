@@ -69,19 +69,18 @@ namespace NewTestApp
         public OpcConnection(NSUrl fname)
         {
             fileName = fname.LastPathComponent;
-            string tempName = fname.AbsoluteString;
+            string tempName = fname.FilePathUrl.AbsoluteString;
             tempName = tempName.Remove(0, "file://".Length);
             fullFileName = tempName;
-            filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var savedObject = new SavedObject();
-            string fileArr = filePath + "/" + fileName;
+
             NSData data = new NSData();
             data = NSData.FromFile(tempName);
            
             Console.WriteLine(tempName);
             Console.WriteLine(data);
 
-            if (data != null)
+            if (data.Length > 0)
             {
                 if (!(subDict is null))
                 {

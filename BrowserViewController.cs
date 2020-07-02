@@ -19,6 +19,7 @@ namespace NewTestApp
         public string fileName;
         public string fileData;
         public NSUrl fullFilename;
+
         public string myDocs;
         public MyDocument Doc;
         public BrowserViewController(IntPtr handle) : base(handle)
@@ -78,6 +79,8 @@ namespace NewTestApp
     }
     public class dbvcDelegate : UIDocumentBrowserViewControllerDelegate
     {
+        private bool alertCancelled;
+        private string alertInput;
         private void ShowAlert(UIViewController controller, string title, string prompt)
         {
 
@@ -96,16 +99,13 @@ namespace NewTestApp
                 else
                 {
                     Console.WriteLine("User: {0}", alert.TextFields[0].Text);
-
-                    //ctrlr.fileName = alert.TextFields[0].Text + ".json";
                     Console.WriteLine(Path.GetTempPath());
-                    //ctrlr.fullFilename = new NSUrl("file://" + Path.Combine(Path.GetTempPath(), ctrlr.fileName));
-
                     ctrlr.fileIsNew = true;
-                    Console.WriteLine(ctrlr.fileName);
                     alert.DismissViewController(true, () =>
                     {
-                        controller.PerformSegue("PageVcSegue", null);
+                        alertInput = alert.TextFields[0].Text;
+                        alertCancelled = false;
+                        
                     });
                 }
 
@@ -113,7 +113,11 @@ namespace NewTestApp
             }));
             alert.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, action =>
             {
-                alert.DismissViewController(true, null);
+                alert.DismissViewController(true, ()=>
+                {
+                    alertCancelled = true;
+                });
+                
 
             }));
 
@@ -135,33 +139,80 @@ namespace NewTestApp
 
         public override void DidRequestDocumentCreation(UIDocumentBrowserViewController controller, Action<NSUrl, UIDocumentBrowserImportMode> importHandler)
         {
+            var title = "Create New File";
+            var prompt = "Enter a file name";
 
-            var docsDir = Path.GetTempPath();
+            UIAlertController alert = UIAlertController.Create(title, prompt, UIAlertControllerStyle.Alert);
             var ctrlr = controller as BrowserViewController;
-            string urlPath = Path.Combine(docsDir, "EPC116789.json");
-            try
+            alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, action =>
             {
-                if (File.Exists(urlPath))
-                    File.Delete(urlPath);
-            }
-            catch
+                // This code is invoked when the user taps on login, and this shows how to access the field values
+                if (alert.TextFields[0].Text.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                {
+                    alert.DismissViewController(true, () =>
+                    {
+                        this.ShowAlert(controller, "Invalid File Name", "Please enter a valid file name");
+                    });
+                }
+                else
+                {
+                    Console.WriteLine("User: {0}", alert.TextFields[0].Text);
+                    Console.WriteLine(Path.GetTempPath());
+                    ctrlr.fileIsNew = true;
+                    alert.DismissViewController(true, () =>
+                    {
+                        alertInput = alert.TextFields[0].Text;
+                        alertCancelled = false;
+                        var docsDir = Path.GetTempPath();
+                        string urlPath = Path.Combine(docsDir, alertInput + ".json");
+                        try
+                        {
+                            if (File.Exists(urlPath))
+                                File.Delete(urlPath);
+                        }
+                        catch
+                        {
+                        }
+
+                        File.Create(urlPath);
+                        
+                        NSUrl nsu = new NSUrl(urlPath);
+                        var url = NSUrl.FromFilename(urlPath);
+                        var fileRef = url.FileReferenceUrl;
+                        ctrlr.fileName = url.LastPathComponent;
+                        importHandler(url, UIDocumentBrowserImportMode.Move);
+
+                        ctrlr.fullFilename = fileRef.AbsoluteUrl;
+
+                        Console.WriteLine(ctrlr.fullFilename);
+                        Console.WriteLine("Success SavingFile");
+                        var fileUrl = url.ToString().Remove(0, "file://".Length);
+
+                        controller.PerformSegue("PageVcSegue", null);
+                    });
+                }
+
+
+            }));
+            alert.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, action =>
             {
-            }
-
-            File.Create(urlPath);
-            NSUrl nsu = new NSUrl(urlPath);
-            var url = NSUrl.FromFilename(urlPath);
-            ctrlr.fullFilename = url.FileReferenceUrl;
-            ctrlr.fileName = url.LastPathComponent;
-            importHandler(url, UIDocumentBrowserImportMode.Move);
+                alert.DismissViewController(true, () =>
+                {
+                    alertCancelled = true;
+                    importHandler(null, UIDocumentBrowserImportMode.Move);
+                });
 
 
+            }));
 
-            Console.WriteLine("Success SavingFile");
-            var fileUrl = url.ToString().Remove(0, "file://".Length);
+            alert.AddTextField((field) =>
+            {
+                //field.Text = true;
+            });
 
+            controller.PresentViewController(alert, animated: true, null);
+  
 
-            ShowAlert(controller, "Create New File", "Enter a file name");
 
 
 
@@ -180,19 +231,19 @@ namespace NewTestApp
 
             ctrlr.fileName = filename;
 
-            ctrlr.myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            if (!ctrlr.fullFilename.ToString().Contains(ctrlr.myDocs))
-            {
-                string tempFile = ctrlr.myDocs + "/" + "__";
-                NSUrl neighborUrl = new NSUrl("file://" + tempFile);
+            //ctrlr.myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            //if (!ctrlr.fullFilename.ToString().Contains(ctrlr.myDocs))
+            //{
+            //    string tempFile = ctrlr.myDocs + "/" + "__";
+            //    NSUrl neighborUrl = new NSUrl("file://" + tempFile);
 
-                File.Create(tempFile);
-                ctrlr.ImportDocument(documentUrls[0], neighborUrl, UIDocumentBrowserImportMode.Copy, (url, error) =>
-                {
-                    Console.WriteLine("Import Successful");
-                    File.Delete(tempFile);
-                });
-            }
+            //    File.Create(tempFile);
+            //    ctrlr.ImportDocument(documentUrls[0], neighborUrl, UIDocumentBrowserImportMode.Copy, (url, error) =>
+            //    {
+            //        Console.WriteLine("Import Successful");
+            //        File.Delete(tempFile);
+            //    });
+            //}
 
 
 

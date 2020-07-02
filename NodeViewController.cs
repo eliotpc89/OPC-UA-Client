@@ -28,11 +28,16 @@ namespace NewTestApp
             this.TableView.AddGestureRecognizer(PanRightGR);
             // Perform any additional setup after loading the view, typically from a nib.
 
-            var upButtonImage = UIImage.GetSystemImage("chevron.up");
-            upButton = new UIBarButtonItem(UIBarButtonSystemItem.Done);
-            //upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
-            NavigationItem.RightBarButtonItem = upButton;
 
+            var upButtonImage = UIImage.GetSystemImage("chevron.left");
+
+            
+            var upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
+
+            //upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
+            var DoneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, DoneButtonAct);
+            NavigationItem.LeftBarButtonItem = upButton;
+            NavigationItem.RightBarButtonItem = DoneButton;
             TableView.Source = dataSource = new DataSource(this);
             foreach (var ii in OpcUa.NodeTreeLoc.Children)
             {
@@ -112,7 +117,10 @@ namespace NewTestApp
 
             BackAct();
         }
-
+        void DoneButtonAct(object sender, EventArgs args)
+        {
+            this.NavigationController.PopViewController(true);
+        }
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
 

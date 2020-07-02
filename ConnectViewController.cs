@@ -56,11 +56,11 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             //string tempName = fullFileName.RelativePath;
-            string tempName = fullFileName.FilePathUrl.ToString().Remove(0, "file://".Length);
+            string tempName = fullFileName.FilePathUrl.AbsoluteString.Remove(0, "file://".Length);
 
             Console.WriteLine("DocWrite: " + tempName);
             Console.WriteLine("DocContent: " + "Hello");
-            File.WriteAllText(tempName, "Hello My Name is Eliot");
+            //File.WriteAllText(tempName, "Hello My Name is Eliot");
 
             TitleFileName.Text = cvcFileName.Substring(0, cvcFileName.Length - ".json".Length);
             NavigationItem.Title = TitleFileName.Text;
@@ -141,7 +141,7 @@ namespace NewTestApp
             {
                 OpcUa = new OpcConnection();
                 OpcUa.fileName = cvcFileName;
-                OpcUa.fullFileName = fullFileName.AbsoluteString;
+                OpcUa.fullFileName = fullFileName.FilePathUrl.AbsoluteString.Remove(0, "file://".Length);
                 //doc.Write(Encoding.ASCII.GetBytes("HOLLEOLFJEOFJLEKJFOJEOFJEJOFEOJF"));
             }
             try
