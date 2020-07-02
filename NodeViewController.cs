@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UIKit;
 using Foundation;
 using Opc.Ua;   // Install-Package OPCFoundation.NetStandard.Opc.Ua
+using CoreGraphics;
 
 namespace NewTestApp
 {
@@ -10,6 +11,8 @@ namespace NewTestApp
     {
         DataSource dataSource;
         UIBarButtonItem upButton;
+        UISwipeGestureRecognizer SwipeRightGR;
+        UIScreenEdgePanGestureRecognizer PanRightGR;
         public OpcConnection OpcUa;
         protected NodeViewController(IntPtr handle) : base(handle)
         {
@@ -19,12 +22,21 @@ namespace NewTestApp
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
+            SwipeRightGR = new UISwipeGestureRecognizer(SwipeRightGrEvent);
+            SwipeRightGR.Direction = UISwipeGestureRecognizerDirection.Right;            
+            SwipeRightGR.Delegate = new GestureDelegate(this);
+            this.View.AddGestureRecognizer(SwipeRightGR);
+            PanRightGR = new UIScreenEdgePanGestureRecognizer();
+            PanRightGR.AddTarget(()=> PanImage(PanRightGR)) ;
+            PanRightGR.Edges = UIRectEdge.Left;
+      
+            PanRightGR.Delegate = new GestureDelegate(this);
+            this.TableView.AddGestureRecognizer(PanRightGR);
             // Perform any additional setup after loading the view, typically from a nib.
 
             var upButtonImage = UIImage.GetSystemImage("chevron.up");
-
-            upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
+            upButton = new UIBarButtonItem(UIBarButtonSystemItem.Done);
+            //upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
             NavigationItem.RightBarButtonItem = upButton;
 
             TableView.Source = dataSource = new DataSource(this);
@@ -41,13 +53,24 @@ namespace NewTestApp
 
         public override void ViewWillAppear(bool animated)
         {
+
             base.ViewWillAppear(animated);
             NavigationController.NavigationBarHidden = false;
             this.Title = OpcUa.NodeTreeLoc.Data.DisplayName.ToString();
             TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Left);
+            NavigationController.InteractivePopGestureRecognizer.CanBePreventedByGestureRecognizer(PanRightGR);
+            var prevented = PanRightGR.CanPreventGestureRecognizer(NavigationController.InteractivePopGestureRecognizer);
 
+            NavigationController.InteractivePopGestureRecognizer.Enabled = false;
+            SwipeRightGR.Enabled = true;
+            
+            Console.WriteLine("Prevented"+prevented);
         }
-
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            NavigationController.InteractivePopGestureRecognizer.Enabled = true;
+        }
         public override void DidReceiveMemoryWarning()
         {
             base.DidReceiveMemoryWarning();
@@ -298,10 +321,67 @@ namespace NewTestApp
         }
 
 
+        public void SwipeRightGrEvent(UISwipeGestureRecognizer gestureRecognizer)
+        {
+            Console.WriteLine("SwipeRightDetected");
+            //var loc = gestureRecognizer.LocationInView(this);
+            //var translation = gestureRecognizer (View);
+            //image.Center = new CGPoint(image.Center.X + translation.X, image.Center.Y + translation.Y);
+        }
 
 
+        void PanImage(UIScreenEdgePanGestureRecognizer gestureRecognizer)
+        {
+            //AdjustAnchorPointForGestureRecognizer(gestureRecognizer);
+            var view = gestureRecognizer.View;
+            if (gestureRecognizer.State == UIGestureRecognizerState.Began || gestureRecognizer.State == UIGestureRecognizerState.Changed)
+            {
+                var translation = gestureRecognizer.TranslationInView(View);
+
+                view.Center = new CGPoint(view.Center.X + translation.X, view.Center.Y);
+                // Reset the gesture recognizer's translation to {0, 0} - the next callback will get a delta from the current position.
+                gestureRecognizer.SetTranslation(CGPoint.Empty, view);
+            }
+            if(gestureRecognizer.State== UIGestureRecognizerState.Ended)
+            {
+                Console.WriteLine("ended");
+                
+
+            }
 
 
+        }
 
+
+    }
+
+
+    class GestureDelegate : UIGestureRecognizerDelegate
+    {
+        NodeViewController controller;
+
+        public GestureDelegate(NodeViewController controller)
+        {
+            this.controller = controller;
+        }
+
+
+        public override bool ShouldReceiveTouch(UIGestureRecognizer aRecogniser, UITouch aTouch)
+        {
+            return true;
+        }
+
+        // Ensure that the pinch, pan and rotate gestures are all recognized simultaneously
+        public override bool ShouldRecognizeSimultaneously(UIGestureRecognizer gestureRecognizer, UIGestureRecognizer otherGestureRecognizer)
+        {
+
+            return true;
+        }
+
+        public override bool ShouldBegin(UIGestureRecognizer recognizer)
+        {
+            return true;
+
+        }
     }
 }
