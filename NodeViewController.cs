@@ -13,6 +13,7 @@ namespace NewTestApp
         UIBarButtonItem upButton;
         UIScreenEdgePanGestureRecognizer PanRightGR;
         public OpcConnection OpcUa;
+
         protected NodeViewController(IntPtr handle) : base(handle)
         {
             // Note: this .ctor should not contain any initialization logic.
@@ -22,22 +23,14 @@ namespace NewTestApp
         {
             base.ViewDidLoad();
             PanRightGR = new UIScreenEdgePanGestureRecognizer();
-            PanRightGR.AddTarget(()=> PanImage(PanRightGR)) ;
+            PanRightGR.AddTarget(() => PanImage(PanRightGR));
             PanRightGR.Edges = UIRectEdge.Left;
             PanRightGR.Delegate = new GestureDelegate(this);
-            this.TableView.AddGestureRecognizer(PanRightGR);
+            this.View.AddGestureRecognizer(PanRightGR);
             // Perform any additional setup after loading the view, typically from a nib.
+            NavigationController.InteractivePopGestureRecognizer.CanBePreventedByGestureRecognizer(PanRightGR);
+            var prevented = PanRightGR.CanPreventGestureRecognizer(NavigationController.InteractivePopGestureRecognizer);
 
-
-            var upButtonImage = UIImage.GetSystemImage("chevron.left");
-
-            
-            var upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
-
-            //upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
-            var DoneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, DoneButtonAct);
-            NavigationItem.LeftBarButtonItem = upButton;
-            NavigationItem.RightBarButtonItem = DoneButton;
             TableView.Source = dataSource = new DataSource(this);
             foreach (var ii in OpcUa.NodeTreeLoc.Children)
             {
@@ -48,6 +41,10 @@ namespace NewTestApp
 
                 }
             }
+            TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Left);
+
+
+
         }
 
         public override void ViewWillAppear(bool animated)
@@ -56,12 +53,20 @@ namespace NewTestApp
             base.ViewWillAppear(animated);
             NavigationController.NavigationBarHidden = false;
             this.Title = OpcUa.NodeTreeLoc.Data.DisplayName.ToString();
-            TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Left);
-            NavigationController.InteractivePopGestureRecognizer.CanBePreventedByGestureRecognizer(PanRightGR);
-            var prevented = PanRightGR.CanPreventGestureRecognizer(NavigationController.InteractivePopGestureRecognizer);
+            var upButtonImage = UIImage.GetSystemImage("chevron.left");
+            var upButton = new UIBarButtonItem(upButtonImage, UIBarButtonItemStyle.Plain, BackButtonAct);
+            var DoneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, DoneButtonAct);
+            NavigationItem.LeftBarButtonItem = upButton;
+            NavigationItem.RightBarButtonItem = DoneButton;
 
+
+
+
+        }
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
             NavigationController.InteractivePopGestureRecognizer.Enabled = false;
-            Console.WriteLine("Prevented"+prevented);
         }
         public override void ViewWillDisappear(bool animated)
         {
@@ -77,6 +82,7 @@ namespace NewTestApp
         {
             if (OpcUa.NodeTreeLoc.Data == OpcUa.NodeTreeRoot.Data)
             {
+
                 NavigationController.PopViewController(true);
             }
             OpcUa.BrowsePrevTree();
@@ -94,7 +100,7 @@ namespace NewTestApp
 
             dataSource.Objects.Clear();
             var midX = this.View.Frame.Width / 2.0;
-            if(TableView.Center.X != midX)
+            if (TableView.Center.X != midX)
             {
 
 
@@ -173,7 +179,7 @@ namespace NewTestApp
                     Console.WriteLine(rd.Data.TypeDefinition.ToString());
 
                 }
-                
+
                 TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Left);
                 return false;
             }
@@ -252,7 +258,7 @@ namespace NewTestApp
                 return cell;
             }
 
-            
+
             public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
             {
                 // Return false if you do not want the specified item to be editable.
@@ -310,11 +316,11 @@ namespace NewTestApp
                         string dispName = dispNamePfx + "." + node.DisplayName.ToString();
                         try
                         {
-                            if(node.NodeClass.ToString() != "Object")
+                            if (node.NodeClass.ToString() != "Object")
                             {
                                 controller.OpcUa.CreateMonitoredItem(nodeId, dispName, true);
                             }
-                            
+
                         }
                         catch
                         {
@@ -322,7 +328,7 @@ namespace NewTestApp
                         }
                         NSIndexPath[] indexPath = { NSIndexPath.FromRowSection(row, 0) };
                         controller.TableView.ReloadRows(indexPath, UITableViewRowAnimation.Fade);
-                    
+
                         success(true);
                     });
 
@@ -353,7 +359,7 @@ namespace NewTestApp
                 // Reset the gesture recognizer's translation to {0, 0} - the next callback will get a delta from the current position.
                 gestureRecognizer.SetTranslation(CGPoint.Empty, view);
             }
-            if(gestureRecognizer.State== UIGestureRecognizerState.Ended)
+            if (gestureRecognizer.State == UIGestureRecognizerState.Ended)
             {
                 var retX = 0.0;
                 var edgeX = view.Center.X - view.Frame.Width / 2.0;
@@ -373,7 +379,8 @@ namespace NewTestApp
                         view.Center = new CGPoint(retX, view.Center.Y);
 
                     },
-                    completion =>{
+                    completion =>
+                    {
                         if (goBack)
                         {
                             BackAct();
@@ -381,10 +388,10 @@ namespace NewTestApp
                         }
 
 
-                });
+                    });
 
                 Console.WriteLine("ended");
-                
+
 
             }
 
@@ -414,7 +421,7 @@ namespace NewTestApp
         public override bool ShouldRecognizeSimultaneously(UIGestureRecognizer gestureRecognizer, UIGestureRecognizer otherGestureRecognizer)
         {
 
-            return true;
+            return false;
         }
 
         public override bool ShouldBegin(UIGestureRecognizer recognizer)

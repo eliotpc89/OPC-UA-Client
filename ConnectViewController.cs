@@ -141,7 +141,8 @@ namespace NewTestApp
             {
                 OpcUa = new OpcConnection();
                 OpcUa.fileName = cvcFileName;
-                OpcUa.fullFileName = fullFileName.FilePathUrl.AbsoluteString.Remove(0, "file://".Length);
+
+                OpcUa.fullFileName = fullFileName.Path;
                 //doc.Write(Encoding.ASCII.GetBytes("HOLLEOLFJEOFJLEKJFOJEOFJEJOFEOJF"));
             }
             try
@@ -156,6 +157,7 @@ namespace NewTestApp
                 OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
                 return;
             }
+            
             AnimateConnection();
 
             

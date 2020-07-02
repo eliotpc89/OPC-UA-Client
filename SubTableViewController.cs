@@ -20,6 +20,7 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             NavigationController.NavigationBarHidden = false;
+            NavigationController.InteractivePopGestureRecognizer.Enabled = true;
         }
         public override void ViewDidAppear(bool animated)
         {

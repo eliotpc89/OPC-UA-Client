@@ -105,6 +105,8 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             NavigationController.NavigationBarHidden = false;
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "Back" };
+            NavigationController.InteractivePopGestureRecognizer.Enabled = true;
         }
         public override void ViewWillDisappear(bool animated)
         {

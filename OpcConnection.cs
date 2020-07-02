@@ -69,8 +69,8 @@ namespace NewTestApp
         public OpcConnection(NSUrl fname)
         {
             fileName = fname.LastPathComponent;
-            string tempName = fname.FilePathUrl.AbsoluteString;
-            tempName = tempName.Remove(0, "file://".Length);
+            string tempName = fname.Path;
+
             fullFileName = tempName;
             var savedObject = new SavedObject();
 
