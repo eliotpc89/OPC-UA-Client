@@ -11,7 +11,6 @@ namespace NewTestApp
     {
         DataSource dataSource;
         UIBarButtonItem upButton;
-        UISwipeGestureRecognizer SwipeRightGR;
         UIScreenEdgePanGestureRecognizer PanRightGR;
         public OpcConnection OpcUa;
         protected NodeViewController(IntPtr handle) : base(handle)
@@ -22,14 +21,9 @@ namespace NewTestApp
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            SwipeRightGR = new UISwipeGestureRecognizer(SwipeRightGrEvent);
-            SwipeRightGR.Direction = UISwipeGestureRecognizerDirection.Right;            
-            SwipeRightGR.Delegate = new GestureDelegate(this);
-            this.View.AddGestureRecognizer(SwipeRightGR);
             PanRightGR = new UIScreenEdgePanGestureRecognizer();
             PanRightGR.AddTarget(()=> PanImage(PanRightGR)) ;
             PanRightGR.Edges = UIRectEdge.Left;
-      
             PanRightGR.Delegate = new GestureDelegate(this);
             this.TableView.AddGestureRecognizer(PanRightGR);
             // Perform any additional setup after loading the view, typically from a nib.
@@ -62,8 +56,6 @@ namespace NewTestApp
             var prevented = PanRightGR.CanPreventGestureRecognizer(NavigationController.InteractivePopGestureRecognizer);
 
             NavigationController.InteractivePopGestureRecognizer.Enabled = false;
-            SwipeRightGR.Enabled = true;
-            
             Console.WriteLine("Prevented"+prevented);
         }
         public override void ViewWillDisappear(bool animated)
@@ -76,8 +68,7 @@ namespace NewTestApp
             base.DidReceiveMemoryWarning();
             // Release any cached data, images, etc that aren't in use.
         }
-
-        void BackButtonAct(object sender, EventArgs args)
+        void BackAct()
         {
             if (OpcUa.NodeTreeLoc.Data == OpcUa.NodeTreeRoot.Data)
             {
@@ -97,13 +88,29 @@ namespace NewTestApp
 
 
             dataSource.Objects.Clear();
+            var midX = this.View.Frame.Width / 2.0;
+            if(TableView.Center.X != midX)
+            {
+
+
+                TableView.ReloadData();
+                TableView.Center = new CGPoint(midX, TableView.Center.Y);
+
+
+            }
+
             foreach (var rd in OpcUa.NodeTreeLoc.Children)
             {
                 dataSource.Objects.Add(rd);
 
             }
             TableView.ReloadSections(new NSIndexSet(0), UITableViewRowAnimation.Right);
+        }
 
+        void BackButtonAct(object sender, EventArgs args)
+        {
+
+            BackAct();
         }
 
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
@@ -321,19 +328,15 @@ namespace NewTestApp
         }
 
 
-        public void SwipeRightGrEvent(UISwipeGestureRecognizer gestureRecognizer)
-        {
-            Console.WriteLine("SwipeRightDetected");
-            //var loc = gestureRecognizer.LocationInView(this);
-            //var translation = gestureRecognizer (View);
-            //image.Center = new CGPoint(image.Center.X + translation.X, image.Center.Y + translation.Y);
-        }
 
 
         void PanImage(UIScreenEdgePanGestureRecognizer gestureRecognizer)
         {
             //AdjustAnchorPointForGestureRecognizer(gestureRecognizer);
             var view = gestureRecognizer.View;
+            var vel = gestureRecognizer.VelocityInView(view);
+
+            Console.WriteLine("Vel: {0}", vel.X);
             if (gestureRecognizer.State == UIGestureRecognizerState.Began || gestureRecognizer.State == UIGestureRecognizerState.Changed)
             {
                 var translation = gestureRecognizer.TranslationInView(View);
@@ -344,6 +347,34 @@ namespace NewTestApp
             }
             if(gestureRecognizer.State== UIGestureRecognizerState.Ended)
             {
+                var retX = 0.0;
+                var edgeX = view.Center.X - view.Frame.Width / 2.0;
+                bool goBack = false;
+                if (edgeX > this.View.Frame.Width / 2 || vel.X > 500.0)
+                {
+                    retX = this.View.Frame.Width * 2.0;
+                    goBack = true;
+                }
+                else
+                {
+                    retX = this.View.Frame.Width / 2.0;
+                    goBack = false;
+                }
+                UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.25, 0, UIViewAnimationOptions.CurveEaseOut, () =>
+                    {
+                        view.Center = new CGPoint(retX, view.Center.Y);
+
+                    },
+                    completion =>{
+                        if (goBack)
+                        {
+                            BackAct();
+
+                        }
+
+
+                });
+
                 Console.WriteLine("ended");
                 
 
