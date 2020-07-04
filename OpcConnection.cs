@@ -145,8 +145,8 @@ namespace NewTestApp
 
                 },
                 TransportConfigurations = new TransportConfigurationCollection(),
-                TransportQuotas = new TransportQuotas { OperationTimeout = 5000 },
-                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 3000 },
+                TransportQuotas = new TransportQuotas { OperationTimeout = 10000 },
+                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 10000 },
                 TraceConfiguration = new TraceConfiguration()
                
             };
