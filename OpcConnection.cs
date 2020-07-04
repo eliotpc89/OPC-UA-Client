@@ -112,8 +112,14 @@ namespace NewTestApp
                         RemoveMonitoredItem(ii, false);
                         Console.WriteLine("removing item");
                     }
-
-                    m_session.CloseSession(null, true);
+                    try
+                    {
+                        m_session.CloseSession(null, true);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("error closing");
+                    }
                 }
             }
 
@@ -142,8 +148,9 @@ namespace NewTestApp
                 TransportQuotas = new TransportQuotas { OperationTimeout = 5000 },
                 ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 3000 },
                 TraceConfiguration = new TraceConfiguration()
+               
             };
-
+            
             config.Validate(ApplicationType.Client).GetAwaiter().GetResult();
             if (config.SecurityConfiguration.AutoAcceptUntrustedCertificates)
             {
@@ -183,9 +190,7 @@ namespace NewTestApp
             NodeTreeRoot.Data.NodeId = rootNodeId;
             subDict = new Dictionary<NodeId, MonitorValue>();
             BrowseNextTree(NodeTreeRoot);
-
-
-
+            SaveFile();
         }
 
         private void Client_KeepAlive(Session sender, KeepAliveEventArgs e)
@@ -215,6 +220,7 @@ namespace NewTestApp
             reconnectHandler = null;
             var tempSubList = (List<Subscription>)m_session.Subscriptions;
             m_subscription = tempSubList[0];
+            UpdateDict();
             Console.WriteLine("--- RECONNECTED ---");
         }
 

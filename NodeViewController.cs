@@ -29,7 +29,7 @@ namespace NewTestApp
             this.View.AddGestureRecognizer(PanRightGR);
             // Perform any additional setup after loading the view, typically from a nib.
             NavigationController.InteractivePopGestureRecognizer.CanBePreventedByGestureRecognizer(PanRightGR);
-            var prevented = PanRightGR.CanPreventGestureRecognizer(NavigationController.InteractivePopGestureRecognizer);
+            PanRightGR.CanPreventGestureRecognizer(NavigationController.InteractivePopGestureRecognizer);
 
             TableView.Source = dataSource = new DataSource(this);
             foreach (var ii in OpcUa.NodeTreeLoc.Children)
@@ -82,7 +82,6 @@ namespace NewTestApp
         {
             if (OpcUa.NodeTreeLoc.Data == OpcUa.NodeTreeRoot.Data)
             {
-
                 NavigationController.PopViewController(true);
             }
             OpcUa.BrowsePrevTree();
@@ -364,7 +363,7 @@ namespace NewTestApp
                 var retX = 0.0;
                 var edgeX = view.Center.X - view.Frame.Width / 2.0;
                 bool goBack = false;
-                if (edgeX > this.View.Frame.Width / 2 || vel.X > 500.0)
+                if (edgeX > this.View.Frame.Width / 2 || vel.X > 250.0)
                 {
                     retX = this.View.Frame.Width * 2.0;
                     goBack = true;
@@ -374,7 +373,7 @@ namespace NewTestApp
                     retX = this.View.Frame.Width / 2.0;
                     goBack = false;
                 }
-                UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.25, 0, UIViewAnimationOptions.CurveEaseOut, () =>
+                UIViewPropertyAnimator.CreateRunningPropertyAnimator(0.1, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveLinear, () =>
                     {
                         view.Center = new CGPoint(retX, view.Center.Y);
 

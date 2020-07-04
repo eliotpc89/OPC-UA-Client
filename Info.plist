@@ -71,9 +71,9 @@
 		</dict>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1</string>
+	<string>1.5</string>
 	<key>CFBundleVersion</key>
-	<string>1.1</string>
+	<string>1.5</string>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>

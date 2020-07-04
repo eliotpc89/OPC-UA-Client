@@ -7,6 +7,7 @@ using System.IO;
 using UIKit;
 using CoreGraphics;
 using System.Text;
+using System.Collections.Generic;
 
 namespace NewTestApp
 {
@@ -19,7 +20,6 @@ namespace NewTestApp
         public bool fileIsNew;
         public bool fileIsLoaded;
         public bool connected;
-        public MyDocument Doc;
         UIViewPropertyAnimator ConnectAnimator, DisconnectAnimator;
 
         public ConnectViewController(IntPtr handle) : base(handle)
@@ -33,7 +33,7 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-    
+
         }
         public override void ViewDidLoad()
         {
@@ -46,7 +46,7 @@ namespace NewTestApp
             {
                 BrowseNodesButton.Alpha = 0;
                 MonitorSubButton.Alpha = 0;
-  
+
                 ConnectButton.Alpha = 1;
             });
 
@@ -78,25 +78,33 @@ namespace NewTestApp
             if (!fileIsNew && !fileIsLoaded)
             {
 
- 
+
                 ConnectButton.Alpha = 1;
                 var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge);
                 activitySpinner.StartAnimating();
-                OpcUa = new OpcConnection(fullFileName);
+                try
+                {
+                    OpcUa = new OpcConnection(fullFileName);
+
+                }
+                catch
+                {
+                    OpcUa = new OpcConnection();
+                    OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
+                    return;
+                }
                 activitySpinner.StopAnimating();
                 fileIsLoaded = true;
                 ConnectAddress.Text = OpcUa.savedAddress;
 
                 AnimateConnection();
             }
-            
+
         }
 
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
-
-
 
         }
 
@@ -113,10 +121,10 @@ namespace NewTestApp
 
 
                 nextVc.OpcUa = OpcUa;
-
-                foreach (var ii in OpcUa.subDict)
+                List<NodeId> nodeList = new List<NodeId>(OpcUa.subDict.Keys);
+                foreach (var ii in nodeList)
                 {
-                    Console.WriteLine(ii.Value);
+                    Console.WriteLine(ii);
                 }
 
             }
@@ -145,6 +153,10 @@ namespace NewTestApp
                 OpcUa.fullFileName = fullFileName.Path;
                 //doc.Write(Encoding.ASCII.GetBytes("HOLLEOLFJEOFJLEKJFOJEOFJEJOFEOJF"));
             }
+            else
+            {
+                OpcUa = new OpcConnection(fullFileName);
+            }
             try
             {
                 var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
@@ -157,10 +169,10 @@ namespace NewTestApp
                 OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
                 return;
             }
-            
+
             AnimateConnection();
 
-            
+
         }
 
         private CGRect origConnectFrame;
@@ -189,7 +201,7 @@ namespace NewTestApp
         }
         partial void ReturnToFileBrowserButton(UIButton sender)
         {
-            if(!(OpcUa is null))
+            if (!(OpcUa is null))
             {
                 OpcUa.ResetOpc();
             }

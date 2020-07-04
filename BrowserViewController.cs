@@ -18,10 +18,10 @@ namespace NewTestApp
         public bool fileIsNew;
         public string fileName;
         public string fileData;
+        public string connectAddress;
         public NSUrl fullFilename;
 
         public string myDocs;
-        public MyDocument Doc;
         public BrowserViewController(IntPtr handle) : base(handle)
         {
 
@@ -58,8 +58,6 @@ namespace NewTestApp
                 nextVc.fullFileName = fullFilename;
                 nextVc.cvcFileName = fileName;
                 nextVc.fileIsNew = fileIsNew;
-                nextVc.Doc = Doc;
-
                 Console.WriteLine("Performing Segue to CVC: {0}", fileName);
 
             }
@@ -175,8 +173,7 @@ namespace NewTestApp
                         }
 
                         File.Create(urlPath);
-                        
-                        NSUrl nsu = new NSUrl(urlPath);
+                        NSUrl nsu = NSUrl.FromString(urlPath);
                         var url = NSUrl.FromFilename(urlPath);
                         var fileRef = url.FileReferenceUrl;
                         ctrlr.fileName = url.LastPathComponent;
@@ -247,12 +244,18 @@ namespace NewTestApp
 
 
 
-            ctrlr.fileIsNew = false;
+
             NSData data = new NSData();
-            data = NSData.FromFile(ctrlr.fullFilename.AbsoluteString);
+            data = NSData.FromFile(ctrlr.fullFilename.Path);
             Console.WriteLine(ctrlr.fullFilename.AbsoluteString);
             Console.WriteLine(data);
             Console.WriteLine(filename);
+            if(!(data is null))
+            {
+                ctrlr.fileIsNew = !(data.Length > 0);
+
+            }
+
 
             controller.PerformSegue("PageVcSegue", null);
         }

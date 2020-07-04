@@ -41,7 +41,6 @@ namespace NewTestApp
             if (DetailItem != newDetailItem)
             {
                 DetailItem = newDetailItem;
-                typName = OpcUa.subDict[newDetailItem].value.WrappedValue.TypeInfo.ToString();
                 DetailTitleBar.Title = nodeName;
                 dispName = nodeName;
                 localNodeid = newDetailItem;
@@ -219,7 +218,9 @@ namespace NewTestApp
             // check for error.
             if (StatusCode.IsBad(results[0]))
             {
-                throw ServiceResultException.Create(results[0], 0, diagnosticInfos, responseHeader.StringTable);
+                var BadValAlert = UIAlertController.Create("Write Error", "Invalid Value", UIAlertControllerStyle.Alert);
+                BadValAlert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+                PresentViewController(BadValAlert, true, null);
             }
         }
 
