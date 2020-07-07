@@ -20,8 +20,9 @@ namespace NewTestApp
         public string fileData;
         public string connectAddress;
         public NSUrl fullFilename;
-
+        public NSData bm;
         public string myDocs;
+        public MyDocument myDoc;
         public BrowserViewController(IntPtr handle) : base(handle)
         {
 
@@ -58,19 +59,16 @@ namespace NewTestApp
                 nextVc.fullFileName = fullFilename;
                 nextVc.cvcFileName = fileName;
                 nextVc.fileIsNew = fileIsNew;
-                Console.WriteLine("Performing Segue to CVC: {0}", fileName);
+                nextVc.myDoc = myDoc;
+                nextVc.bm = bm;
+                Console.WriteLine("Performing Segue to CVC: {0}", fullFilename);
 
             }
 
 
         }
 
-        public virtual void DidImportDocument(UIDocumentBrowserViewController controller, NSUrl sourceUrl, NSUrl destinationUrl)
-        {
 
-            Console.WriteLine("Destination{destinationUrl}");
-
-        }
 
 
 
@@ -79,6 +77,13 @@ namespace NewTestApp
     {
         private bool alertCancelled;
         private string alertInput;
+
+        public override void DidImportDocument(UIDocumentBrowserViewController controller, NSUrl sourceUrl, NSUrl destinationUrl)
+        {
+
+            Console.WriteLine("Destination{0}", destinationUrl.AbsoluteString);
+
+        }
         private void ShowAlert(UIViewController controller, string title, string prompt)
         {
 
@@ -103,7 +108,7 @@ namespace NewTestApp
                     {
                         alertInput = alert.TextFields[0].Text;
                         alertCancelled = false;
-                        
+
                     });
                 }
 
@@ -111,11 +116,11 @@ namespace NewTestApp
             }));
             alert.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, action =>
             {
-                alert.DismissViewController(true, ()=>
+                alert.DismissViewController(true, () =>
                 {
                     alertCancelled = true;
                 });
-                
+
 
             }));
 
@@ -130,8 +135,8 @@ namespace NewTestApp
         }
         public override void FailedToImportDocument(UIDocumentBrowserViewController controller, NSUrl documentUrl, NSError error)
         {
-            base.FailedToImportDocument(controller, documentUrl, error);
             Console.WriteLine("Fail: {0}", documentUrl.AbsoluteString);
+            Console.WriteLine("Fail Error {0}", error.LocalizedDescription);
         }
 
 
@@ -163,21 +168,39 @@ namespace NewTestApp
                         alertCancelled = false;
                         var docsDir = Path.GetTempPath();
                         string urlPath = Path.Combine(docsDir, alertInput + ".json");
-                        try
-                        {
-                            if (File.Exists(urlPath))
-                                File.Delete(urlPath);
-                        }
-                        catch
-                        {
-                        }
 
                         File.Create(urlPath);
                         NSUrl nsu = NSUrl.FromString(urlPath);
                         var url = NSUrl.FromFilename(urlPath);
+
                         var fileRef = url.FileReferenceUrl;
                         ctrlr.fileName = url.LastPathComponent;
-                        importHandler(url, UIDocumentBrowserImportMode.Move);
+                        url.StartAccessingSecurityScopedResource();
+                        ctrlr.myDoc = new MyDocument(url);
+                        ctrlr.myDoc.Save(url, UIDocumentSaveOperation.ForCreating, saveSuccess =>
+                        {
+                            if (!saveSuccess)
+                            {
+                                importHandler(null, UIDocumentBrowserImportMode.None);
+                                return;
+                            }
+                            ctrlr.myDoc.DocumentString = "HELLO WORLD LOTS OF TEXT AND WORDS";
+                            ctrlr.myDoc.UpdateChangeCount(UIDocumentChangeKind.Done);
+                            ctrlr.myDoc.Close(closeSuccess =>
+                            {
+                                if (!closeSuccess)
+                                {
+                                    importHandler(null, UIDocumentBrowserImportMode.None);
+                                    return;
+                                }
+                                importHandler(url, UIDocumentBrowserImportMode.Move);
+                                Console.WriteLine("Close Success");
+                            });
+                        }
+                        );
+
+
+
 
                         ctrlr.fullFilename = fileRef.AbsoluteUrl;
 
@@ -208,7 +231,7 @@ namespace NewTestApp
             });
 
             controller.PresentViewController(alert, animated: true, null);
-  
+
 
 
 
@@ -243,14 +266,14 @@ namespace NewTestApp
             //}
 
 
-            
+
 
             NSData data = new NSData();
             data = NSData.FromFile(ctrlr.fullFilename.Path);
             Console.WriteLine(ctrlr.fullFilename.AbsoluteString);
             Console.WriteLine(data);
             Console.WriteLine(filename);
-            if(!(data is null))
+            if (!(data is null))
             {
                 ctrlr.fileIsNew = !(data.Length > 0);
 

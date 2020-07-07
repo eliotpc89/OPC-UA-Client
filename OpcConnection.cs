@@ -42,7 +42,7 @@ namespace NewTestApp
         private bool connected { get; set; }
         public Session m_session { get; private set; }
         public SessionReconnectHandler reconnectHandler;
-
+        
         public TreeNode<ReferenceDescription> NodeTreeRoot { get; set; }
         public TreeNode<ReferenceDescription> NodeTreeLoc { get; set; }
         public Dictionary<NodeId, TreeNode<ReferenceDescription>> NodeTreeDict { get; set; }
@@ -145,8 +145,8 @@ namespace NewTestApp
 
                 },
                 TransportConfigurations = new TransportConfigurationCollection(),
-                TransportQuotas = new TransportQuotas { OperationTimeout = 10000 },
-                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 10000 },
+                TransportQuotas = new TransportQuotas { OperationTimeout = 20000 },
+                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 20000 },
                 TraceConfiguration = new TraceConfiguration()
                
             };
@@ -165,7 +165,7 @@ namespace NewTestApp
             };
             //application.CheckApplicationInstanceCertificate(false, 2048).GetAwaiter().GetResult();
 
-            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 9000);
+            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 20000);
 
             m_MonitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
             Console.WriteLine($"Step 2 - Create a session with your server: {selectedEndpoint.EndpointUrl} ");

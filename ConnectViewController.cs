@@ -16,6 +16,8 @@ namespace NewTestApp
         public string cvcFileName;
         public string cvcAddress;
         public NSUrl fullFileName;
+        public NSData bm;
+        public MyDocument myDoc;
         public OpcConnection OpcUa;
         public bool fileIsNew;
         public bool fileIsLoaded;
@@ -33,6 +35,9 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
+
+            myDoc.DocumentString = "HELLO WORLD HELLO WORLD";
+            myDoc.UpdateChangeCount(UIDocumentChangeKind.Done);
 
         }
         public override void ViewDidLoad()
@@ -56,9 +61,9 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             //string tempName = fullFileName.RelativePath;
-            string tempName = fullFileName.FilePathUrl.AbsoluteString.Remove(0, "file://".Length);
+            //string tempName = fullFileName.FilePathUrl.AbsoluteString.Remove(0, "file://".Length);
 
-            Console.WriteLine("DocWrite: " + tempName);
+            //Console.WriteLine("DocWrite: " + tempName);
             Console.WriteLine("DocContent: " + "Hello");
             //File.WriteAllText(tempName, "Hello My Name is Eliot");
 
@@ -145,30 +150,33 @@ namespace NewTestApp
 
         partial void OpcUaConnectUp(UIButton sender)
         {
+
+
             if (fileIsNew)
             {
                 OpcUa = new OpcConnection();
                 OpcUa.fileName = cvcFileName;
 
                 OpcUa.fullFileName = fullFileName.Path;
+                Console.WriteLine(fullFileName.Path);
                 //doc.Write(Encoding.ASCII.GetBytes("HOLLEOLFJEOFJLEKJFOJEOFJEJOFEOJF"));
             }
             else
             {
                 OpcUa = new OpcConnection(fullFileName);
             }
-            try
-            {
+            //try
+            //{
                 var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
                 activitySpinner.StartAnimating();
                 OpcUa.Connect(ConnectAddress.Text.ToString());
                 activitySpinner.StopAnimating();
-            }
-            catch
-            {
-                OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
-                return;
-            }
+            //}
+            //catch
+            //{
+            //    OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
+            //    return;
+            //}
 
             AnimateConnection();
 
