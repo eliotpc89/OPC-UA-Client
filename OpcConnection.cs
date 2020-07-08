@@ -42,7 +42,7 @@ namespace NewTestApp
         private bool connected { get; set; }
         public Session m_session { get; private set; }
         public SessionReconnectHandler reconnectHandler;
-        
+        public MyDocument myDoc;
         public TreeNode<ReferenceDescription> NodeTreeRoot { get; set; }
         public TreeNode<ReferenceDescription> NodeTreeLoc { get; set; }
         public Dictionary<NodeId, TreeNode<ReferenceDescription>> NodeTreeDict { get; set; }
@@ -66,33 +66,28 @@ namespace NewTestApp
         {
             filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
-        public OpcConnection(NSUrl fname)
+        public OpcConnection(MyDocument myDoc)
         {
-            fileName = fname.LastPathComponent;
-            string tempName = fname.Path;
+            this.myDoc = myDoc;
+            SavedObject savedObject = new SavedObject();
 
-            fullFileName = tempName;
-            var savedObject = new SavedObject();
-
-            NSData data = new NSData();
-            data = NSData.FromFile(tempName);
-           
-            Console.WriteLine(tempName);
-            Console.WriteLine(data);
-
-            if (data.Length > 0)
+            if (myDoc.DocumentString.Length > 0)
             {
                 if (!(subDict is null))
                 {
                     ResetOpc();
                 }
                 Console.WriteLine("found file");
-                savedObject = JsonConvert.DeserializeObject<SavedObject>(data.ToString());
+                savedObject = JsonConvert.DeserializeObject<SavedObject>(myDoc.DocumentString);
                 savedAddress = savedObject.fileSavedAddress;
                 Connect(savedAddress);
                 CreateMonitoredItems(savedObject.fileSubMon);
 
 
+            }
+            else
+            {
+                Console.WriteLine("New File");
             }
 
 
@@ -321,9 +316,8 @@ namespace NewTestApp
         {
 
             var json = new SavedObject(this);
-            //var fname = Path.Combine(filePath, fileName);
-            Console.WriteLine(fullFileName);
-            File.WriteAllText(fullFileName, JsonConvert.SerializeObject(json));
+
+            myDoc.DocumentString = JsonConvert.SerializeObject(json);
 
 
         }

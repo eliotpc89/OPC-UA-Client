@@ -56,11 +56,11 @@ namespace NewTestApp
                          as ConnectViewController;
             if (segue.Identifier == "PageVcSegue")
             {
-                nextVc.fullFileName = fullFilename;
                 nextVc.cvcFileName = fileName;
                 nextVc.fileIsNew = fileIsNew;
                 nextVc.myDoc = myDoc;
-                nextVc.bm = bm;
+                nextVc.fullFileName = fullFilename;
+
                 Console.WriteLine("Performing Segue to CVC: {0}", fullFilename);
 
             }
@@ -82,6 +82,10 @@ namespace NewTestApp
         {
 
             Console.WriteLine("Destination{0}", destinationUrl.AbsoluteString);
+            var ctrlr = controller as BrowserViewController;
+            ctrlr.fullFilename =  destinationUrl;
+            ctrlr.myDoc = new MyDocument(destinationUrl);
+            ctrlr.PerformSegue("PageVcSegue", null);
 
         }
         private void ShowAlert(UIViewController controller, string title, string prompt)
@@ -173,9 +177,7 @@ namespace NewTestApp
                         NSUrl nsu = NSUrl.FromString(urlPath);
                         var url = NSUrl.FromFilename(urlPath);
 
-                        var fileRef = url.FileReferenceUrl;
                         ctrlr.fileName = url.LastPathComponent;
-                        url.StartAccessingSecurityScopedResource();
                         ctrlr.myDoc = new MyDocument(url);
                         ctrlr.myDoc.Save(url, UIDocumentSaveOperation.ForCreating, saveSuccess =>
                         {
@@ -183,9 +185,7 @@ namespace NewTestApp
                             {
                                 importHandler(null, UIDocumentBrowserImportMode.None);
                                 return;
-                            }
-                            ctrlr.myDoc.DocumentString = "HELLO WORLD LOTS OF TEXT AND WORDS";
-                            ctrlr.myDoc.UpdateChangeCount(UIDocumentChangeKind.Done);
+                            } 
                             ctrlr.myDoc.Close(closeSuccess =>
                             {
                                 if (!closeSuccess)
@@ -200,15 +200,7 @@ namespace NewTestApp
                         );
 
 
-
-
-                        ctrlr.fullFilename = fileRef.AbsoluteUrl;
-
-                        Console.WriteLine(ctrlr.fullFilename);
-                        Console.WriteLine("Success SavingFile");
-                        var fileUrl = url.ToString().Remove(0, "file://".Length);
-
-                        controller.PerformSegue("PageVcSegue", null);
+                        
                     });
                 }
 
@@ -234,53 +226,30 @@ namespace NewTestApp
 
 
 
-
-
         }
 
         public override void DidPickDocumentsAtUrls(UIDocumentBrowserViewController controller, NSUrl[] documentUrls)
         {
 
             Console.WriteLine("url = {0}", documentUrls[0].FilePathUrl);
-            //bool success = MoveFileToApp(didPickDocArgs.Url);
+            NSUrl url = documentUrls[0].FilePathUrl;
             var ctrlr = controller as BrowserViewController;
             var success = true;
             ctrlr.fullFilename = documentUrls[0];
-            string filename = documentUrls[0].LastPathComponent;
-            string msg = success ? string.Format("Successfully imported file '{0}'", filename) : string.Format("Failed to import file '{0}'", filename);
-
-            ctrlr.fileName = filename;
-
-            //ctrlr.myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            //if (!ctrlr.fullFilename.ToString().Contains(ctrlr.myDocs))
-            //{
-            //    string tempFile = ctrlr.myDocs + "/" + "__";
-            //    NSUrl neighborUrl = new NSUrl("file://" + tempFile);
-
-            //    File.Create(tempFile);
-            //    ctrlr.ImportDocument(documentUrls[0], neighborUrl, UIDocumentBrowserImportMode.Copy, (url, error) =>
-            //    {
-            //        Console.WriteLine("Import Successful");
-            //        File.Delete(tempFile);
-            //    });
-            //}
-
-
-
-
-            NSData data = new NSData();
-            data = NSData.FromFile(ctrlr.fullFilename.Path);
-            Console.WriteLine(ctrlr.fullFilename.AbsoluteString);
-            Console.WriteLine(data);
-            Console.WriteLine(filename);
-            if (!(data is null))
+            
+            ctrlr.fileName = documentUrls[0].LastPathComponent;
+            string msg = success ? string.Format("Successfully imported file '{0}'", ctrlr.fileName) : string.Format("Failed to import file '{0}'", ctrlr.fileName);
+            
+            ctrlr.myDoc = new MyDocument(url);
+            ctrlr.myDoc.Open((success) =>
             {
-                ctrlr.fileIsNew = !(data.Length > 0);
+                Console.WriteLine("CompletionText: {0}", url.AbsoluteString);
+                ctrlr.fileIsNew = !(ctrlr.myDoc.DocumentString.Length > 0);
+                Console.WriteLine("Picked Document is New: {0}", ctrlr.fileIsNew.ToString());
+                ctrlr.fullFilename = url;
+                controller.PerformSegue("PageVcSegue", null);
+            });
 
-            }
-
-
-            controller.PerformSegue("PageVcSegue", null);
         }
 
 

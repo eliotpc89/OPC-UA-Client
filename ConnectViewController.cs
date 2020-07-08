@@ -36,8 +36,6 @@ namespace NewTestApp
         {
             base.ViewDidAppear(animated);
 
-            myDoc.DocumentString = "HELLO WORLD HELLO WORLD";
-            myDoc.UpdateChangeCount(UIDocumentChangeKind.Done);
 
         }
         public override void ViewDidLoad()
@@ -60,12 +58,8 @@ namespace NewTestApp
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            //string tempName = fullFileName.RelativePath;
-            //string tempName = fullFileName.FilePathUrl.AbsoluteString.Remove(0, "file://".Length);
-
-            //Console.WriteLine("DocWrite: " + tempName);
-            Console.WriteLine("DocContent: " + "Hello");
-            //File.WriteAllText(tempName, "Hello My Name is Eliot");
+            Console.WriteLine(myDoc.DocumentString);
+            //myDoc = new MyDocument(fullFileName);
 
             TitleFileName.Text = cvcFileName.Substring(0, cvcFileName.Length - ".json".Length);
             NavigationItem.Title = TitleFileName.Text;
@@ -89,7 +83,7 @@ namespace NewTestApp
                 activitySpinner.StartAnimating();
                 try
                 {
-                    OpcUa = new OpcConnection(fullFileName);
+                    OpcUa = new OpcConnection(myDoc);
 
                 }
                 catch
@@ -154,16 +148,14 @@ namespace NewTestApp
 
             if (fileIsNew)
             {
-                OpcUa = new OpcConnection();
+                OpcUa = new OpcConnection(myDoc);
                 OpcUa.fileName = cvcFileName;
 
-                OpcUa.fullFileName = fullFileName.Path;
-                Console.WriteLine(fullFileName.Path);
                 //doc.Write(Encoding.ASCII.GetBytes("HOLLEOLFJEOFJLEKJFOJEOFJEJOFEOJF"));
             }
             else
             {
-                OpcUa = new OpcConnection(fullFileName);
+                OpcUa = new OpcConnection(myDoc);
             }
             //try
             //{
