@@ -19,7 +19,7 @@ namespace NewTestApp
 			set
 			{
 				dataModel = new NSString(value);
-				this.UpdateChangeCount(UIDocumentChangeKind.Done);
+
 			}
 		}
 

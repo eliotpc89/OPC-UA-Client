@@ -16,6 +16,10 @@ namespace NewTestApp
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIActivityIndicatorView activitySpinner { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton BrowseNodesButton { get; set; }
 
         [Outlet]
@@ -44,6 +48,11 @@ namespace NewTestApp
 
         void ReleaseDesignerOutlets ()
         {
+            if (activitySpinner != null) {
+                activitySpinner.Dispose ();
+                activitySpinner = null;
+            }
+
             if (BrowseNodesButton != null) {
                 BrowseNodesButton.Dispose ();
                 BrowseNodesButton = null;

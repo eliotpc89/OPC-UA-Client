@@ -133,7 +133,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="61972" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="170" y="803" width="73" height="43"/>
+                                <rect key="frame" x="170" y="737" width="73" height="43"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <state key="normal" image="info.circle" catalog="system">
                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
@@ -142,6 +142,10 @@
                                     <segue id="62073" destination="62005" kind="presentation"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="65512" fixedFrame="YES" hidesWhenStopped="YES" animating="YES">
+                                <rect key="frame" x="197" y="413" width="0.0" height="0.0"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES" flexibleMinY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     </view>
@@ -152,6 +156,7 @@
                         <outlet property="BrowseNodesButton" destination="10755" id="name-outlet-10755"/>
                         <outlet property="MonitorSubButton" destination="14543" id="name-outlet-14543"/>
                         <outlet property="ConnectButton" destination="1557" id="name-outlet-1557"/>
+                        <outlet property="activitySpinner" destination="65512" id="name-outlet-65512"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="911" userLabel="First Responder" sceneMemberID="firstResponder"/>

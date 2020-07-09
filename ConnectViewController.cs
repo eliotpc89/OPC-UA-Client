@@ -8,6 +8,7 @@ using UIKit;
 using CoreGraphics;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace NewTestApp
 {
@@ -32,12 +33,7 @@ namespace NewTestApp
         {
 
         }
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
 
-
-        }
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -59,7 +55,6 @@ namespace NewTestApp
         {
             base.ViewWillAppear(animated);
             Console.WriteLine(myDoc.DocumentString);
-            //myDoc = new MyDocument(fullFileName);
 
             TitleFileName.Text = cvcFileName.Substring(0, cvcFileName.Length - ".json".Length);
             NavigationItem.Title = TitleFileName.Text;
@@ -72,15 +67,23 @@ namespace NewTestApp
                 ConnectButton.Alpha = 1;
 
             }
+            if (!fileIsNew && !fileIsLoaded)
+            {
+                ConnectButton.Alpha = 0;
+                ConnectAddress.BorderStyle = UITextBorderStyle.None;
+                ConnectAddress.Text = "Connecting to Server...";
+            }
 
-
+        }
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
             if (!fileIsNew && !fileIsLoaded)
             {
 
 
-                ConnectButton.Alpha = 1;
-                var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge);
                 activitySpinner.StartAnimating();
+
                 try
                 {
                     OpcUa = new OpcConnection(myDoc);
@@ -92,13 +95,13 @@ namespace NewTestApp
                     OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
                     return;
                 }
-                activitySpinner.StopAnimating();
+
                 fileIsLoaded = true;
                 ConnectAddress.Text = OpcUa.savedAddress;
 
                 AnimateConnection();
             }
-
+            activitySpinner.StopAnimating();
         }
 
         public override void ViewDidDisappear(bool animated)
@@ -144,6 +147,9 @@ namespace NewTestApp
 
         partial void OpcUaConnectUp(UIButton sender)
         {
+            activitySpinner.Hidden = false;
+            activitySpinner.StartAnimating();
+
 
 
             if (fileIsNew)
@@ -151,25 +157,25 @@ namespace NewTestApp
                 OpcUa = new OpcConnection(myDoc);
                 OpcUa.fileName = cvcFileName;
 
-                //doc.Write(Encoding.ASCII.GetBytes("HOLLEOLFJEOFJLEKJFOJEOFJEJOFEOJF"));
             }
             else
             {
                 OpcUa = new OpcConnection(myDoc);
             }
-            //try
-            //{
-                var activitySpinner = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
-                activitySpinner.StartAnimating();
-                OpcUa.Connect(ConnectAddress.Text.ToString());
-                activitySpinner.StopAnimating();
-            //}
-            //catch
-            //{
-            //    OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
-            //    return;
-            //}
+            try
+            {
 
+
+                OpcUa.Connect(ConnectAddress.Text.ToString());
+
+            }
+            catch
+            {
+                OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
+                activitySpinner.StopAnimating();
+                return;
+            }
+            activitySpinner.StopAnimating();
             AnimateConnection();
 
 
@@ -205,6 +211,7 @@ namespace NewTestApp
             {
                 OpcUa.ResetOpc();
             }
+            myDoc.Close(null);
             connected = false;
             NavigationController.PopToRootViewController(true);
         }

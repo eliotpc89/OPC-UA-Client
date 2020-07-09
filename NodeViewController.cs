@@ -67,6 +67,8 @@ namespace NewTestApp
         {
             base.ViewDidAppear(animated);
             NavigationController.InteractivePopGestureRecognizer.Enabled = false;
+            var sects = TableView.IndexPathsForVisibleRows;
+            TableView.ReloadRows(sects, UITableViewRowAnimation.None);
         }
         public override void ViewWillDisappear(bool animated)
         {

@@ -71,9 +71,9 @@
 		</dict>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>1.9</string>
+	<string>1.13</string>
 	<key>CFBundleVersion</key>
-	<string>1.9</string>
+	<string>1.13</string>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -100,5 +100,17 @@
 			<string>public.json</string>
 		</dict>
 	</array>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.eliotpc89.OPC-UA-Client</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+			<key>NSUbiquitousContainerName</key>
+			<string>UA Client Connect</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

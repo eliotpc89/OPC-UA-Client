@@ -140,8 +140,8 @@ namespace NewTestApp
 
                 },
                 TransportConfigurations = new TransportConfigurationCollection(),
-                TransportQuotas = new TransportQuotas { OperationTimeout = 20000 },
-                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 20000 },
+                TransportQuotas = new TransportQuotas { OperationTimeout = 10000 },
+                ClientConfiguration = new ClientConfiguration { DefaultSessionTimeout = 10000 },
                 TraceConfiguration = new TraceConfiguration()
                
             };
@@ -160,7 +160,7 @@ namespace NewTestApp
             };
             //application.CheckApplicationInstanceCertificate(false, 2048).GetAwaiter().GetResult();
 
-            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 20000);
+            var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAddress, useSecurity: false, operationTimeout: 10000);
 
             m_MonitoredItem_Notification = new MonitoredItemNotificationEventHandler(MonitoredItem_Notification);
             Console.WriteLine($"Step 2 - Create a session with your server: {selectedEndpoint.EndpointUrl} ");
@@ -318,6 +318,7 @@ namespace NewTestApp
             var json = new SavedObject(this);
 
             myDoc.DocumentString = JsonConvert.SerializeObject(json);
+            myDoc.UpdateChangeCount(UIDocumentChangeKind.Done);
 
 
         }

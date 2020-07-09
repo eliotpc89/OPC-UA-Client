@@ -230,24 +230,36 @@ namespace NewTestApp
 
         public override void DidPickDocumentsAtUrls(UIDocumentBrowserViewController controller, NSUrl[] documentUrls)
         {
+            var Token = NSFileManager.DefaultManager.UbiquityIdentityToken;
 
+            var uburl = NSFileManager.DefaultManager.GetUrlForUbiquityContainer(null);
             Console.WriteLine("url = {0}", documentUrls[0].FilePathUrl);
+            documentUrls[0].StartAccessingSecurityScopedResource();
             NSUrl url = documentUrls[0].FilePathUrl;
+            url.StartAccessingSecurityScopedResource();
             var ctrlr = controller as BrowserViewController;
             var success = true;
             ctrlr.fullFilename = documentUrls[0];
             
             ctrlr.fileName = documentUrls[0].LastPathComponent;
             string msg = success ? string.Format("Successfully imported file '{0}'", ctrlr.fileName) : string.Format("Failed to import file '{0}'", ctrlr.fileName);
-            
+
             ctrlr.myDoc = new MyDocument(url);
+
             ctrlr.myDoc.Open((success) =>
             {
-                Console.WriteLine("CompletionText: {0}", url.AbsoluteString);
-                ctrlr.fileIsNew = !(ctrlr.myDoc.DocumentString.Length > 0);
+                if (!success)
+                {
+                    Console.WriteLine("Failed to open");
+                }
+                Console.WriteLine("CompletionText: {0}", ctrlr.myDoc.DocumentString);
+                ctrlr.fileIsNew = !(ctrlr.myDoc.DocumentString.Length > 0) ;
+
                 Console.WriteLine("Picked Document is New: {0}", ctrlr.fileIsNew.ToString());
                 ctrlr.fullFilename = url;
+                //url.StopAccessingSecurityScopedResource();
                 controller.PerformSegue("PageVcSegue", null);
+
             });
 
         }
