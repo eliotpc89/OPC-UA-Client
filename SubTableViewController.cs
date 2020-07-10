@@ -25,7 +25,25 @@ namespace NewTestApp
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
+            bool reload = false;
+            int rownum = 0;
+            for(rownum=0; rownum < dataSource.Objects.Count; rownum++)
+            {
+                var obj = dataSource.Objects[rownum] as MonitorValue;
+                if(!OpcUa.subDict.ContainsKey(obj.monItem.ResolvedNodeId))
+                {
+                    dataSource.Objects.RemoveAt(rownum);
+                    reload = true;
+                    break;
+                }
+            }
 
+            if (reload)
+            {
+                NSIndexPath[] ipath = { NSIndexPath.FromRowSection(rownum, 0) };
+                
+                TableView.DeleteRows(ipath, UITableViewRowAnimation.Right);
+            }
 
         }
 

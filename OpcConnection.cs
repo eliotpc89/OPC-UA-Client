@@ -3,11 +3,11 @@ using Opc.Ua.Client;
 using Opc.Ua.Configuration;
 using System;
 using System.Collections.Generic;
-
+using UIKit;
 using System.IO;
 using Newtonsoft.Json;
 using Foundation;
-using UIKit;
+
 
 namespace NewTestApp
 {
@@ -318,7 +318,7 @@ namespace NewTestApp
             var json = new SavedObject(this);
 
             myDoc.DocumentString = JsonConvert.SerializeObject(json);
-            myDoc.UpdateChangeCount(UIDocumentChangeKind.Done);
+            myDoc.UpdateChangeCount(UIKit.UIDocumentChangeKind.Done);
 
 
         }
@@ -459,7 +459,7 @@ namespace NewTestApp
                     {
                         controller.NavigationController.PopToRootViewController(true);
                     }
-                    
+
                 });
 
             }));

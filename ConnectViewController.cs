@@ -147,36 +147,50 @@ namespace NewTestApp
 
         partial void OpcUaConnectUp(UIButton sender)
         {
-            activitySpinner.Hidden = false;
+
             activitySpinner.StartAnimating();
 
-
-
-            if (fileIsNew)
+            Thread t1 = new Thread(() =>
             {
-                OpcUa = new OpcConnection(myDoc);
-                OpcUa.fileName = cvcFileName;
+                InvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        OpcUa = new OpcConnection(myDoc);
+                        if (fileIsNew)
+                        {
 
-            }
-            else
-            {
-                OpcUa = new OpcConnection(myDoc);
-            }
-            try
-            {
+                            OpcUa.fileName = cvcFileName;
+
+                        }
+
+                        if (fileIsNew)
+                        {
+                            OpcUa.Connect(ConnectAddress.Text.ToString());
+                        }
+
+                        activitySpinner.StopAnimating();
+                        AnimateConnection();
+                    }
+
+                    catch
+                    {
+
+                        OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
+                        activitySpinner.StopAnimating();
+                        return;
+
+                    }
+                });
+
+            });
 
 
-                OpcUa.Connect(ConnectAddress.Text.ToString());
 
-            }
-            catch
-            {
-                OpcUa.ConnectError(this, false, "Connection Failed", "Failed to Connect to OPC UA Server");
-                activitySpinner.StopAnimating();
-                return;
-            }
-            activitySpinner.StopAnimating();
-            AnimateConnection();
+            t1.Start();
+
+
+
 
 
         }

@@ -164,6 +164,7 @@ namespace NewTestApp
             catch
             {
                 OpcUa.ConnectError(this, true, "Connection Failed", "Failed to Connect to OPC UA Server");
+                NavigationController.PopToRootViewController(true);
                 return false;
             }
 
