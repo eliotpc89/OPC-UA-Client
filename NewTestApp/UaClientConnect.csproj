@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProjectGuid>{493CA694-1A88-4D14-B854-0EDDB1932C16}</ProjectGuid>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TemplateGuid>{e1087329-5912-47eb-bd6a-19b74ccb7863}</TemplateGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>NewTestApp</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>NewTestApp</AssemblyName>
+    <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <ProvisioningType>automatic</ProvisioningType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchArch>x86_64</MtouchArch>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
+<CodesignKey>Apple Development: eliotpc89@gmail.com (425Z29RP34)</CodesignKey>
+<LangVersion>8.0</LangVersion>
+<MtouchFastDev>true</MtouchFastDev>
+<CodesignProvision>UA Client Connect w iCloud</CodesignProvision>
+<CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>None</MtouchLink>
+    <MtouchArch>x86_64</MtouchArch>
+<LangVersion>8.0</LangVersion>
+<CodesignKey>Apple Development: eliotpc89@gmail.com (425Z29RP34)</CodesignKey>
+<CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+<CodesignProvision>UA Client Connect w iCloud</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchArch>ARM64</MtouchArch>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignKey>Apple Development: eliotpc89@gmail.com (425Z29RP34)</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <LangVersion>8.0</LangVersion>
+    <BuildIpa>true</BuildIpa>
+<MtouchInterpreter>-all</MtouchInterpreter>
+<AssemblyName>UaConnectClient</AssemblyName>
+<CodesignProvision>UA Client Connect w iCloud</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchArch>ARM64</MtouchArch>
+    <CodesignKey>Apple Development: eliotpc89@gmail.com (425Z29RP34)</CodesignKey>
+    <LangVersion>8.0</LangVersion>
+    <BuildIpa>true</BuildIpa>
+    <IpaPackageName>UaClientConnect</IpaPackageName>
+    <AssemblyName>UaConnectClient</AssemblyName>
+    <CodesignProvision>UA Client Connect w iCloud</CodesignProvision>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="SceneDelegate.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ConnectViewController.cs" />
+    <Compile Include="ConnectViewController.designer.cs">
+      <DependentUpon>ConnectViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OpcConnection.cs" />
+    <Compile Include="DetailViewTableController.cs" />
+    <Compile Include="DetailViewTableController.designer.cs">
+      <DependentUpon>DetailViewTableController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubTableViewController.cs" />
+    <Compile Include="SubTableViewController.designer.cs">
+      <DependentUpon>SubTableViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubTableView.cs" />
+    <Compile Include="SubTableView.designer.cs">
+      <DependentUpon>SubTableView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubCellDetail.cs" />
+    <Compile Include="SubCellDetail.designer.cs">
+      <DependentUpon>SubCellDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TreeNode.cs" />
+    <Compile Include="DetailNavController.cs" />
+    <Compile Include="DetailNavController.designer.cs">
+      <DependentUpon>DetailNavController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BrowserViewController.cs" />
+    <Compile Include="BrowserViewController.designer.cs">
+      <DependentUpon>BrowserViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PageVC.cs" />
+    <Compile Include="PageVC.designer.cs">
+      <DependentUpon>PageVC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NodeViewController.cs" />
+    <Compile Include="NodeViewController.designer.cs">
+      <DependentUpon>NodeViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AboutViewController.cs" />
+    <Compile Include="AboutViewController.designer.cs">
+      <DependentUpon>AboutViewController.cs</DependentUpon>
+    </Compile>
+    <None Include="UaClientConnect.ipa" />
+    <None Include="Info.plist" />
+    <Compile Include="MyDocument.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DetailViewController.cs" />
+    <Compile Include="DetailViewController.designer.cs">
+      <DependentUpon>DetailViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <InterfaceDefinition Include="Main.storyboard" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-20.0x20.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-20.0x20.0%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-29.0x29.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-29.0x29.0%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-40.0x40.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-40.0x40.0%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-60.0x60.0%402x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-60.0x60.0%403x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-1024.0x1024.0%401x.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-40.0x40.0%402x-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\76.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\152.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\167.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\40.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\20.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\40-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\29.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\58.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Entitlements.plist" />
+    <Content Include="EmptyXmlFile.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua">
+      <Version>1.4.361.39</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Essentials">
+      <Version>1.5.3.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\U LOGO.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+</Project>
